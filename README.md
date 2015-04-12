@@ -13,11 +13,11 @@ the installation instructions for that package (you need Python headers and
 
 To start the proof of concept, run:
 
-    $ sudo iptables -I INPUT -j NFQUEUE --queue-num 0
+    $ sudo iptables -I INPUT -j NFQUEUE --queue-num 1
     $ sudo python concept.py
 
 Note that once you've added the IPTables rule, you will not have any internet
 access, until the firewall starts.  Once you exit the firewall (Control-C), run
 the following command to remove the rule and restore normal operation:
 
-    $ sudo iptables -D INPUT -j NFQUEUE --queue-num 0
+    $ sudo iptables -D INPUT -j NFQUEUE --queue-num 1
