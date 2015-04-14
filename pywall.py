@@ -2,6 +2,7 @@
 """Contains PyWall class, the main class for our Python firewall."""
 
 from __future__ import print_function
+from packets import IPPacket
 
 import os
 
@@ -74,8 +75,16 @@ class PyWall(object):
             print('\nTore down IPTables: ' + teardown)
 
 
+def print_ip_packet(packet):
+    """Prints out packet information at the IP level."""
+    ip_packet = IPPacket(packet.get_payload())
+    print(unicode(ip_packet))
+    return False
+
+
 if __name__ == '__main__':
     # A firewall that will accept everything.  Which is really a pretty poor
     # firewall.
     the_wall = PyWall(default='ACCEPT')
+    the_wall.add_rule('INPUT', print_ip_packet)
     the_wall.run()
