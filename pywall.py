@@ -79,6 +79,7 @@ def print_ip_packet(packet):
     """Prints out packet information at the IP level."""
     ip_packet = IPPacket(packet.get_payload())
     print(unicode(ip_packet))
+    print(unicode(ip_packet.get_payload()))
     return False
 
 
