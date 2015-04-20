@@ -27,6 +27,7 @@ class PortFilter(Rule):
         match = match and (self._dst_port == None or packet.get_payload().get_dst_port() == self._dst_port)
         if match:
             print('PortFilter: %s' % str(self._action))
+        return match
 
 
 class PortRangeFilter(Rule):
