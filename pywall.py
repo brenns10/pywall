@@ -6,6 +6,7 @@ from packets import IPPacket
 import config
 
 import os
+import logging
 
 import netfilterqueue as nfq
 
@@ -102,7 +103,7 @@ if __name__ == '__main__':
     init_log(log_level=logging.DEBUG, log_name='pywall.log', log_mode='w')
     import sys
     if len(sys.argv) != 2:
-        print("usage: %s CONFIG-FILE" % (sys.argv[0]), file=sys.stderr)
+        logging.critical("usage: %s CONFIG-FILE" % (sys.argv[0]), file=sys.stderr)
         sys.exit(1)
     conf = config.PyWallConfig(sys.argv[1])
     the_wall = conf.create_pywall()
