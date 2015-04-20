@@ -79,7 +79,27 @@ class PyWall(object):
             print('\nTore down IPTables: ' + teardown)
 
 
+def init_log(log_level, log_name=None, log_mode='a'):
+    """
+    Prints default log messages to console, optionally to a file.
+
+    Reference: https://docs.python.org/2/howto/logging.html
+    """
+    f = logging.Formatter(fmt='[%(asctime)s] %(message)s')
+
+    sh = logging.StreamHandler()
+    sh.setLevel(log_level)
+    sh.setFormatter(f)
+    logging.getLogger().addHandler(sh)
+    if log_name:
+        fh = logging.FileHandler(filename=log_name, mode=log_mode)
+        fh.setLevel(log_level)
+        fh.setFormatter(f)
+        logging.getLogger().addHandler(fh)
+
+
 if __name__ == '__main__':
+    init_log(log_level=logging.DEBUG, log_name='pywall.log', log_mode='w')
     import sys
     if len(sys.argv) != 2:
         print("usage: %s CONFIG-FILE" % (sys.argv[0]), file=sys.stderr)
