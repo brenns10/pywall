@@ -2,11 +2,11 @@ import netaddr
 
 class IPFilter():
     """Filter IP packets based on some filtering condition."""
-    def __init__(self, action):
+    def __init__(self, **kwargs):
         """
         action: 'DROP' or 'ACCEPT'. What to do with the packet if it falls in the range.
         """
-        self._action = action
+        self._action = kwargs['action']
 
     def __call__(self, pywall_packet):
         """
@@ -24,14 +24,14 @@ class IPFilter():
 
 class IPRangeFilter(IPFilter):
     """Filter IP packets based on source/dest address."""
-    def __init__(self, action, ip_start, ip_end):
-        IPFilter.__init__(self, action)
-        self._ip_range = netaddr.IPRange(ip_start, ip_end)
+    def __init__(self, **kwargs):
+        IPFilter.__init__(self, kwargs)
+        self._ip_range = netaddr.IPRange(kwargs['ip_start'], kwargs['ip_end'])
 
 class SourceIPFilter(IPRangeFilter):
     """Filter IP packets based on source address"""
-    def __init__(self, action, ip_start, ip_end):
-        IPRangeFilter.__init__(self, action, ip_start, ip_end)
+    def __init__(self, **kwargs):
+        IPRangeFilter.__init__(self, kwargs)
     
     def filter_condition(self, pywall_packet):
         """
@@ -41,8 +41,8 @@ class SourceIPFilter(IPRangeFilter):
 
 class DestinationIPFilter(IPRangeFilter):
     """Filter IP packets based on destination address"""
-    def __init__(self, action, ip_start, ip_end):
-        IPRangeFilter.__init__(self, action, ip_start, ip_end)
+    def __init__(self, **kwargs):
+        IPRangeFilter.__init__(self, kwargs)
 
     def filter_condition(self, pywall_packet):
         """
