@@ -32,6 +32,13 @@ class TransportLayerPacket(Packet):
     """Base class packets at the transport layer """
     __metaclass__ = ABCMeta
 
+    def to_tuple(self):
+        """
+        Returns the standard transport layer 4-tuple.
+        """
+        return (self._src_port, self._dst_port,
+                self._src_ip, self._dst_ip)
+
 
 class IPPacket(Packet):
     """
