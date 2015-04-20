@@ -100,15 +100,21 @@ class TCPPacket(TransportLayerPacket):
         self._options = buff[20:(self._data_offset * 4)]  # can be parsed later if we care
         self._total_length = len(buff)
 
-    def __unicode__(self):
-        """Returns a printable version of the TCP header"""
-        return u'TCP from %d to %d' % (self._src_port, self._dest_port)
-
     def get_header_len(self):
         return self._data_offset * 4
 
     def get_data_len(self):
         return self._total_length - self.get_header_len()
+
+    def get_src_port(self):
+        return self._src_port
+    
+    def get_dst_port(self):
+        return self._dst_port
+
+    def __unicode__(self):
+        """Returns a printable version of the TCP header"""
+        return u'TCP from %d to %d' % (self._src_port, self._dest_port)
 
 
 class UDPPacket(TransportLayerPacket):
@@ -125,6 +131,12 @@ class UDPPacket(TransportLayerPacket):
 
     def get_data_len(self):
         return self._total_length - self.get_header_len()
+
+    def get_src_port(self):
+        return self._src_port
+    
+    def get_dst_port(self):
+        return self._dst_port
 
     def __unicode__(self):
         """Returns a printable version of the UDP header"""
