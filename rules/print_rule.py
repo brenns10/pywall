@@ -1,0 +1,18 @@
+"""Printout rule for PyWall."""
+
+from __future__ import print_function
+from rules import register
+from packets import IPPacket
+
+
+class PrintRule(object):
+
+    def __call__(self, packet):
+        """Prints out packet information at the IP level."""
+        ip_packet = IPPacket(packet.get_payload())
+        print(unicode(ip_packet))
+        print(unicode(ip_packet.get_payload()))
+        return False
+
+
+register(PrintRule)

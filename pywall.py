@@ -75,14 +75,6 @@ class PyWall(object):
             print('\nTore down IPTables: ' + teardown)
 
 
-def print_ip_packet(packet):
-    """Prints out packet information at the IP level."""
-    ip_packet = IPPacket(packet.get_payload())
-    print(unicode(ip_packet))
-    print(unicode(ip_packet.get_payload()))
-    return False
-
-
 if __name__ == '__main__':
     # A firewall that will accept everything.  Which is really a pretty poor
     # firewall.
