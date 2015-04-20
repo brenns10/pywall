@@ -6,7 +6,6 @@ import multiprocessing as mp
 import socket
 import os
 import signal
-import time
 import select
 
 
@@ -47,8 +46,9 @@ class TCPConnectionHandler(ConnectionHandler):
 
 
 class PyWallTest(object):
-    def set_filename(self, filename):
-        self.filename = filename
+    def __init__(self, config_filename, handler):
+        self.config_filename = config_filename
+        self.set_handler(handler)
 
     def set_handler(self, handler):
         self.queue = mp.Queue()
@@ -59,7 +59,7 @@ class PyWallTest(object):
     def run(self):
         sem = mp.Semaphore(0)
         self.wall_process = mp.Process(target=run_pywall,
-                                       args=(self.filename,), kwargs={'test':True, 'lock':sem})
+                                       args=(self.config_filename,), kwargs={'test':True, 'lock':sem})
         self.wall_process.start()
         print('lock acquiring')
         sem.acquire(True)
@@ -77,14 +77,14 @@ class PyWallTest(object):
 
 
 class TCPConnectTest(PyWallTest):
-    def __init__(self):
-        self.port = 58008
-        self.set_filename('test/tcp_connection.json')
-        self.set_handler(TCPConnectionHandler(self.port, timeout=0.1))
+    def __init__(self, config_filename, port, timeout=1):
+        self.port = port
+        self.timeout = timeout
+        PyWallTest.__init__(self, config_filename, TCPConnectionHandler(port, timeout=0.1))
 
     def request(self):
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        s.settimeout(1)
+        s.settimeout(self.timeout)
         try:
             s.connect(('localhost', self.port))
         except socket.timeout:
@@ -93,5 +93,5 @@ class TCPConnectTest(PyWallTest):
 
 if __name__ == '__main__':
     print('hi')
-    test = TCPConnectTest()
+    test = TCPConnectTest('test/tcp_connection.json', 58008, timeout=1)
     test.run()

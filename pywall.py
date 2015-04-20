@@ -70,8 +70,9 @@ class PyWall(object):
         nfqueue = nfq.NetfilterQueue()
         nfqueue.bind(self.queue_num, self.callback)
         if kwargs.get('test', False):
-            lock = kwargs['lock']
-            lock.release()
+            lock = kwargs.get('lock', None)
+            if lock:
+                lock.release()
         try:
             nfqueue.run()
         finally:
