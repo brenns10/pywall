@@ -2,7 +2,6 @@
 
 from __future__ import print_function
 from rules import register
-from packets import IPPacket
 
 
 class PrintRule(object):
