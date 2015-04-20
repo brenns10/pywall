@@ -4,6 +4,6 @@
         {"name": "SourceIPRule",
          "start_ip": "127.0.0.1",
          "end_ip": "127.0.0.1",
-         "target": "ACCEPT"}
+         "action": "ACCEPT"}
     ]
 }
