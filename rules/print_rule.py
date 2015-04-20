@@ -1,15 +1,16 @@
 """Printout rule for PyWall."""
 
 from __future__ import print_function
-from rules import register
+from rules import register, Rule
 
 
-class PrintRule(object):
+class PrintRule(Rule):
 
-    def __call__(self, packet):
+    def filter_condition(self, pywall_packet):
         """Prints out packet information at the IP level."""
-        print(unicode(packet))
-        print(unicode(packet.get_payload()))
+        print(unicode(pywall_packet))
+        print(unicode(pywall_packet.get_payload()))
+        # Action should not be applied. Ever.
         return False
 
 
