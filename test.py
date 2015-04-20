@@ -6,6 +6,7 @@ import multiprocessing as mp
 import socket
 import os
 import signal
+import time
 import select
 
 
@@ -19,41 +20,41 @@ def run_pywall(config_file, **kwargs):
     wall.run(**kwargs)
 
 
-class ConnectionHandler(object):
+class ServerProcess(object):
     def run(self, q):
         self.setup_socket()
         res = self.wait_socket()
         print('after wait_socket')
         q.put(res)
+        print('put in queue')
 
 
-class TCPConnectionHandler(ConnectionHandler):
-    def __init__(self, port, timeout=0.5):
+class TCPServerProcess(ServerProcess):
+    def __init__(self, port, timeout=5):
         self.port = port
         self.timeout = timeout
 
     def setup_socket(self):
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.sock.bind(('localhost', self.port))
-        self.sock.setblocking(0)
-        #self.sock.listen(1)
-        self.sock.settimeout(self.timeout)
+        self.sock.listen(5)
 
     def wait_socket(self):
-        print('Waiting on handler socket.')
+        print('Waiting on server socket.')
         rlist, _, __ = select.select([self.sock], [], [], self.timeout)
         return (len(rlist) >= 1)
 
 
-class PyWallTest(object):
-    def __init__(self, config_filename, handler):
+class PyWallTestCase(object):
+    def __init__(self, config_filename, server, server_sleep_time=1):
         self.config_filename = config_filename
-        self.set_handler(handler)
+        self.server_sleep_time = server_sleep_time
+        self.set_server(server)
 
-    def set_handler(self, handler):
+    def set_server(self, server):
         self.queue = mp.Queue()
-        self.handler = handler
-        self.handler_process = mp.Process(target=handler.run,
+        self.server = server
+        self.server_process = mp.Process(target=server.run,
                                           args=(self.queue,))
 
     def run(self):
@@ -61,12 +62,11 @@ class PyWallTest(object):
         self.wall_process = mp.Process(target=run_pywall,
                                        args=(self.config_filename,), kwargs={'test':True, 'lock':sem})
         self.wall_process.start()
-        print('lock acquiring')
-        sem.acquire(True)
-        print('lock acquired')
-        self.handler_process.start()
-        self.request()
-        self.handler_process.join()
+        sem.acquire()  # firewall is ready here
+        self.server_process.start()
+        time.sleep(self.server_sleep_time)
+        self.client_request()
+        self.server_process.join()
         if self.queue.get():
             print('TEST PASSED')
         else:
@@ -76,13 +76,13 @@ class PyWallTest(object):
         print('Test over')
 
 
-class TCPConnectTest(PyWallTest):
-    def __init__(self, config_filename, port, timeout=1):
+class TCPConnectionTest(PyWallTestCase):
+    def __init__(self, config_filename, port, client_timeout=1, server_timeout=5):
         self.port = port
-        self.timeout = timeout
-        PyWallTest.__init__(self, config_filename, TCPConnectionHandler(port, timeout=0.1))
+        self.timeout = client_timeout
+        PyWallTestCase.__init__(self, config_filename, TCPServerProcess(port, server_timeout))
 
-    def request(self):
+    def client_request(self):
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         s.settimeout(self.timeout)
         try:
@@ -93,5 +93,5 @@ class TCPConnectTest(PyWallTest):
 
 if __name__ == '__main__':
     print('hi')
-    test = TCPConnectTest('test/tcp_connection.json', 58008, timeout=1)
+    test = TCPConnectionTest('test/tcp_connection.json', 58008, client_timeout=1, server_timeout=5)
     test.run()
