@@ -1,6 +1,6 @@
 import netaddr
 
-class IPFilter():
+class IPRule():
     """Filter IP packets based on some filtering condition."""
     def __init__(self, **kwargs):
         """
@@ -22,16 +22,16 @@ class IPFilter():
         else:
             return False
 
-class IPRangeFilter(IPFilter):
+class IPRangeRule(IPRule):
     """Filter IP packets based on source/dest address."""
     def __init__(self, **kwargs):
-        IPFilter.__init__(self, **kwargs)
+        IPRule.__init__(self, **kwargs)
         self._ip_range = netaddr.IPRange(kwargs['start_ip'], kwargs['end_ip'])
 
-class SourceIPFilter(IPRangeFilter):
+class SourceIPRule(IPRangeRule):
     """Filter IP packets based on source address"""
     def __init__(self, **kwargs):
-        IPRangeFilter.__init__(self, **kwargs)
+        IPRangeRule.__init__(self, **kwargs)
     
     def filter_condition(self, pywall_packet):
         """
@@ -39,12 +39,14 @@ class SourceIPFilter(IPRangeFilter):
         """
         return pywall_packet._src_ip in self._ip_range
 
-class DestinationIPFilter(IPRangeFilter):
+class DestinationIPRule(IPRangeRule):
     """Filter IP packets based on destination address"""
     def __init__(self, **kwargs):
-        IPRangeFilter.__init__(self, **kwargs)
+        IPRangeRule.__init__(self, **kwargs)
 
     def filter_condition(self, pywall_packet):
         """
         Filter packets if their destination address falls within the ip_range."""
         return pywall_packet._dest_ip in self._ip_range
+register(SourceIPRule)
+register(DestinationIPRule)
