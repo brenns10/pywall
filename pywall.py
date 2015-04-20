@@ -3,7 +3,7 @@
 
 from __future__ import print_function
 from packets import IPPacket
-from ip_filters import *
+import config
 
 import os
 
@@ -79,16 +79,11 @@ class PyWall(object):
             print('\nTore down IPTables: ' + teardown)
 
 
-def print_ip_packet(packet):
-    """Prints out packet information at the IP level."""
-    print(unicode(packet))
-    print(unicode(packet.get_payload()))
-    return False
-
-
 if __name__ == '__main__':
-    # A firewall that will accept everything.  Which is really a pretty poor
-    # firewall.
-    the_wall = PyWall(default='ACCEPT')
-    the_wall.add_rule('INPUT', DestinationIPFilter(action='DROP', start_ip='172.19.0.0', end_ip='172.19.255.255'))
+    import sys
+    if len(sys.argv) != 2:
+        print("usage: %s CONFIG-FILE" % (sys.argv[0]), file=sys.stderr)
+        sys.exit(1)
+    conf = config.PyWallConfig(sys.argv[1])
+    the_wall = conf.create_pywall()
     the_wall.run()
