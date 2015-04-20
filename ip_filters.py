@@ -25,13 +25,13 @@ class IPFilter():
 class IPRangeFilter(IPFilter):
     """Filter IP packets based on source/dest address."""
     def __init__(self, **kwargs):
-        IPFilter.__init__(self, kwargs)
-        self._ip_range = netaddr.IPRange(kwargs['ip_start'], kwargs['ip_end'])
+        IPFilter.__init__(self, **kwargs)
+        self._ip_range = netaddr.IPRange(kwargs['start_ip'], kwargs['end_ip'])
 
 class SourceIPFilter(IPRangeFilter):
     """Filter IP packets based on source address"""
     def __init__(self, **kwargs):
-        IPRangeFilter.__init__(self, kwargs)
+        IPRangeFilter.__init__(self, **kwargs)
     
     def filter_condition(self, pywall_packet):
         """
@@ -42,7 +42,7 @@ class SourceIPFilter(IPRangeFilter):
 class DestinationIPFilter(IPRangeFilter):
     """Filter IP packets based on destination address"""
     def __init__(self, **kwargs):
-        IPRangeFilter.__init__(self, kwargs)
+        IPRangeFilter.__init__(self, **kwargs)
 
     def filter_condition(self, pywall_packet):
         """
