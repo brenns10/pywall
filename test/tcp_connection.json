@@ -1,5 +1,5 @@
 {
-    "default_chain": "REJECT",
+    "default_chain": "DROP",
     "INPUT": [
         {"name": "SourceIPRule",
          "start_ip": "127.0.0.1",

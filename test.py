@@ -16,7 +16,7 @@ def run_pywall(config_file):
     pywall._NFQ_CLOSE = 'iptables -D INPUT -i lo -j NFQUEUE --queue-num %d'
     conf = PyWallConfig(config_file)
     wall = conf.create_pywall()
-    wall.run(test=True)
+    wall.run()
 
 
 class ConnectionHandler(object):
@@ -31,7 +31,7 @@ class ConnectionHandler(object):
 
 class TCPConnectionHandler(ConnectionHandler):
 
-    def __init__(self, port, timeout=0.1):
+    def __init__(self, port, timeout=0.5):
         self.port = port
         self.timeout = timeout
 
@@ -42,6 +42,7 @@ class TCPConnectionHandler(ConnectionHandler):
         self.sock.settimeout(self.timeout)
 
     def wait_socket(self):
+        print('Waiting on handler socket.')
         self.sock.accept()
 
 
@@ -61,7 +62,7 @@ class PyWallTest(object):
                                        args=(self.filename,))
         self.wall_process.start()
         self.handler_process.start()
-        time.sleep(0.01)
+        time.sleep(0.1)
         self.request()
         self.handler_process.join()
         if self.queue.get():
