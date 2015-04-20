@@ -12,6 +12,7 @@ import netfilterqueue as nfq
 
 _NFQ_INIT = 'iptables -I INPUT -j NFQUEUE --queue-num %d'
 _NFQ_CLOSE = 'iptables -D INPUT -j NFQUEUE --queue-num %d'
+_LOG_FILE_HANDLER = None
 
 
 class PyWall(object):
@@ -86,7 +87,7 @@ def init_log(log_level, log_name=None, log_mode='a'):
 
     Reference: https://docs.python.org/2/howto/logging.html
     """
-    f = logging.Formatter(fmt='[%(asctime)s] %(message)s')
+    f = logging.Formatter(fmt='[%(asctime)s][%(level)8s] %(message)s')
 
     sh = logging.StreamHandler()
     sh.setLevel(log_level)
@@ -96,6 +97,7 @@ def init_log(log_level, log_name=None, log_mode='a'):
         fh = logging.FileHandler(filename=log_name, mode=log_mode)
         fh.setLevel(log_level)
         fh.setFormatter(f)
+        _LOG_FILE_HANDLER = fh
         logging.getLogger().addHandler(fh)
 
 
