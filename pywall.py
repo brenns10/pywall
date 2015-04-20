@@ -36,25 +36,28 @@ class PyWall(object):
         """Add a rule to a chain."""
         self.chains[chain].append(rule)
 
-    def _apply_chain(self, chain, packet):
+    def _apply_chain(self, chain, nfqueue_packet, pywall_packet):
         """Run the packet through a chain."""
         if chain == 'ACCEPT':
-            packet.accept()
+            nfqueue_packet.accept()
         elif chain == 'DROP':
-            packet.drop()
+            nfqueue_packet.drop()
         else:
             # Match against every rule:
             for rule in self.chains[chain]:
-                result = rule(packet)
+                result = rule(pywall_packet)
                 # If it matches, execute the rule.
                 if result:
-                    return self._apply_chain(result, packet)
+                    return self._apply_chain(result, nfqueue_packet,
+                                             pywall_packet)
             # If no matches, run the default rule.
-            return self._apply_chain(self.default, packet)
+            return self._apply_chain(self.default, nfqueue_packet,
+                                     pywall_packet)
 
     def callback(self, packet):
         """Accept packets from NFQueue."""
-        self._apply_chain(self._start, packet)
+        pywall_packet = IPPacket(packet.get_payload())
+        self._apply_chain(self._start, packet, pywall_packet)
 
     def run(self):
         """Run the PyWall!"""
