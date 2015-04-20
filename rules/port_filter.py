@@ -21,17 +21,12 @@ class PortFilter(Rule):
         if self._src_port == None and self._dst_port == None:
             raise ValueError('At least one of src_port or dst_port should be non-None')
 
-    def _is_packet_match(self, packet):
+    def filter_condition(self, packet):
         match = (packet.get_protocol() == self._protocol)
         match = match and (self._src_port == None or packet.get_payload().get_src_port() == self._src_port)
         match = match and (self._dst_port == None or packet.get_payload().get_dst_port() == self._dst_port)
-        return match
-
-    def __call__(self, packet):
-        if self._is_packet_match(packet):
+        if match:
             print('PortFilter: %s' % str(self._action))
-            return self._action
-        return False
 
 
 class PortRangeFilter(Rule):
@@ -65,19 +60,15 @@ class PortRangeFilter(Rule):
         valid = valid and (port_lo <= port_hi)
         return valid
 
-    def _is_packet_match(self, packet):
+    def filter_condition(self, packet):
         match = (packet.get_protocol() == self._protocol)
         match = match and (self._src_range == (None, None) or
                            (self._src_lo <= packet.get_payload().get_src_port() <= self._src_hi))
         match = match and (self._dst_range == (None, None) or
                            (self._dst_lo <= packet.get_payload().get_dst_port() <= self._dst_hi))
-        return match
-
-    def __call__(self, packet):
-        if self._is_packet_match(packet):
+        if match:
             print('PortRangeFilter: %s' % str(self._action))
-            return self._action
-        return False
+        return match
 
 
 register(PortFilter)
