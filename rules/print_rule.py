@@ -8,8 +8,8 @@ class PrintRule(object):
 
     def __call__(self, packet):
         """Prints out packet information at the IP level."""
-        print(unicode(ip_packet))
-        print(unicode(ip_packet.get_payload()))
+        print(unicode(packet))
+        print(unicode(packet.get_payload()))
         return False
 
 
