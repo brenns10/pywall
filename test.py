@@ -7,30 +7,28 @@ import socket
 import os
 import signal
 import time
+import select
 
 
-def run_pywall(config_file):
+def run_pywall(config_file, **kwargs):
     import pywall
     from config import PyWallConfig
     pywall._NFQ_INIT = 'iptables -I INPUT -i lo -j NFQUEUE --queue-num %d'
     pywall._NFQ_CLOSE = 'iptables -D INPUT -i lo -j NFQUEUE --queue-num %d'
     conf = PyWallConfig(config_file)
     wall = conf.create_pywall()
-    wall.run()
+    wall.run(**kwargs)
 
 
 class ConnectionHandler(object):
     def run(self, q):
         self.setup_socket()
-        try:
-            self.wait_socket()
-            q.put(True)
-        except socket.timeout:
-            q.put(False)
+        res = self.wait_socket()
+        print('after wait_socket')
+        q.put(res)
 
 
 class TCPConnectionHandler(ConnectionHandler):
-
     def __init__(self, port, timeout=0.5):
         self.port = port
         self.timeout = timeout
@@ -38,16 +36,17 @@ class TCPConnectionHandler(ConnectionHandler):
     def setup_socket(self):
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.sock.bind(('localhost', self.port))
-        self.sock.listen(1)
+        self.sock.setblocking(0)
+        #self.sock.listen(1)
         self.sock.settimeout(self.timeout)
 
     def wait_socket(self):
         print('Waiting on handler socket.')
-        self.sock.accept()
+        rlist, _, __ = select.select([self.sock], [], [], self.timeout)
+        return (len(rlist) >= 1)
 
 
 class PyWallTest(object):
-
     def set_filename(self, filename):
         self.filename = filename
 
@@ -58,11 +57,14 @@ class PyWallTest(object):
                                           args=(self.queue,))
 
     def run(self):
+        sem = mp.Semaphore(0)
         self.wall_process = mp.Process(target=run_pywall,
-                                       args=(self.filename,))
+                                       args=(self.filename,), kwargs={'test':True, 'lock':sem})
         self.wall_process.start()
+        print('lock acquiring')
+        sem.acquire(True)
+        print('lock acquired')
         self.handler_process.start()
-        time.sleep(0.1)
         self.request()
         self.handler_process.join()
         if self.queue.get():
@@ -75,15 +77,18 @@ class PyWallTest(object):
 
 
 class TCPConnectTest(PyWallTest):
-
     def __init__(self):
         self.port = 58008
         self.set_filename('test/tcp_connection.json')
-        self.set_handler(TCPConnectionHandler(self.port, 0.1))
+        self.set_handler(TCPConnectionHandler(self.port, timeout=0.1))
 
     def request(self):
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        s.connect(('localhost', self.port))
+        s.settimeout(1)
+        try:
+            s.connect(('localhost', self.port))
+        except socket.timeout:
+            return
 
 
 if __name__ == '__main__':
