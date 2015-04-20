@@ -3,6 +3,7 @@
 
 from __future__ import print_function
 from packets import IPPacket
+from ip_filters import *
 
 import os
 
@@ -89,5 +90,5 @@ if __name__ == '__main__':
     # A firewall that will accept everything.  Which is really a pretty poor
     # firewall.
     the_wall = PyWall(default='ACCEPT')
-    the_wall.add_rule('INPUT', print_ip_packet)
+    the_wall.add_rule('INPUT', DestinationIPFilter(action='DROP', start_ip='172.19.0.0', end_ip='172.19.255.255'))
     the_wall.run()
