@@ -3,6 +3,7 @@
 
 from __future__ import print_function
 from packets import IPPacket
+import config
 
 import os
 
@@ -79,8 +80,10 @@ class PyWall(object):
 
 
 if __name__ == '__main__':
-    # A firewall that will accept everything.  Which is really a pretty poor
-    # firewall.
-    the_wall = PyWall(default='ACCEPT')
-    the_wall.add_rule('INPUT', print_ip_packet)
+    import sys
+    if len(sys.argv) != 2:
+        print("usage: %s CONFIG-FILE" % (sys.argv[0]), file=sys.stderr)
+        sys.exit(1)
+    conf = config.PyWallConfig(sys.argv[1])
+    the_wall = conf.create_pywall()
     the_wall.run()
