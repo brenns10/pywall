@@ -1,9 +1,9 @@
 from rules import register
+from rules import Rule
 
 import socket
 
-
-class PortFilter(object):
+class PortFilter(Rule):
     """Class for filtering out packets to/from a single port"""
     def __init__(self, **kwargs):  #protocol, match_callback, src_port=None, dst_port=None):
         protocol = kwargs.get('protocol', None)
@@ -34,7 +34,7 @@ class PortFilter(object):
         return False
 
 
-class PortRangeFilter(object):
+class PortRangeFilter(Rule):
     """Blocks all packets with given protocol on inclusive range [lo, hi]."""
     def __init__(self, **kwargs):  #protocol, match_callback, src_range=(None,None), dst_range=(None,None)):
         protocol = kwargs.get('protocol', None)
