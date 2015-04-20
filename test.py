@@ -6,12 +6,12 @@ import multiprocessing as mp
 import socket
 import os
 import signal
-
-from config import PyWallConfig
-import pywall
+import time
 
 
 def run_pywall(config_file):
+    import pywall
+    from config import PyWallConfig
     pywall._NFQ_INIT = 'iptables -I INPUT -i lo -j NFQUEUE --queue-num %d'
     pywall._NFQ_CLOSE = 'iptables -D INPUT -i lo -j NFQUEUE --queue-num %d'
     conf = PyWallConfig(config_file)
@@ -23,7 +23,7 @@ class ConnectionHandler(object):
     def run(self, q):
         self.setup_socket()
         try:
-            s.wait_socket()
+            self.wait_socket()
             q.put(True)
         except socket.timeout:
             q.put(False)
@@ -61,6 +61,7 @@ class PyWallTest(object):
                                        args=(self.filename,))
         self.wall_process.start()
         self.handler_process.start()
+        time.sleep(0.01)
         self.request()
         self.handler_process.join()
         if self.queue.get():

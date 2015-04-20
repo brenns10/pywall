@@ -3,7 +3,6 @@
 
 from __future__ import print_function
 from packets import IPPacket
-import config
 
 import os
 
@@ -81,6 +80,7 @@ class PyWall(object):
 
 if __name__ == '__main__':
     import sys
+    import config
     if len(sys.argv) != 2:
         print("usage: %s CONFIG-FILE" % (sys.argv[0]), file=sys.stderr)
         sys.exit(1)

@@ -1,9 +1,9 @@
 {
-    'default_chain': 'REJECT',
-    'INPUT': [
-        {'name': 'SourceIPRule',
-         'start_ip': '127.0.0.1',
-         'end_ip': '127.0.0.1',
-         'target': 'ACCEPT'}
+    "default_chain": "REJECT",
+    "INPUT": [
+        {"name": "SourceIPRule",
+         "start_ip": "127.0.0.1",
+         "end_ip": "127.0.0.1",
+         "target": "ACCEPT"}
     ]
 }
