@@ -54,9 +54,10 @@ class PyWall(object):
             # TCP connection until we're sure that we have.
             if type(payload) is TCPPacket:
                 tup = to_tuple(pywall_packet)
-                self.tcp_queue.put((tup, bool(payload.flag_syn),
-                                    bool(payload.flag_ack),
-                                    bool(payload.flag_fin)))
+                if self.tcp_queue is not None:
+                    self.tcp_queue.put((tup, bool(payload.flag_syn),
+                                        bool(payload.flag_ack),
+                                        bool(payload.flag_fin)))
             nfqueue_packet.accept()
         elif chain == 'DROP':
             nfqueue_packet.drop()
