@@ -8,6 +8,7 @@ import socket
 
 class PortKnocking(Rule):
     def __init__(self, **kwargs):
+        self._protocol = self._proto_to_const(kwargs.get('protocol', None))
         self._port = kwargs.get('port', None)
         self._src_port = kwargs.get('src_port', None)
         self._body = kwargs.get('body' 'knock-knock')
@@ -15,6 +16,13 @@ class PortKnocking(Rule):
         self._doors = self._convert_doors(kwargs.get('doors', []))
         self._activity = {}  # IP -> (state, timestamp)
 
+    def _proto_to_const(self, protocol_str):
+        if protocol_str == 'TCP':
+            return socket.IPPROTO_TCP
+        elif protocol_str == 'UDP': 
+            return socket.IPPROTO_UDP
+        else:
+            raise ValueError('Missing or invalid protocol')
 
     def _convert_doors(self, user_doors):
         final_doors = []
@@ -52,9 +60,13 @@ class PortKnocking(Rule):
         elif last_activity + timedelta(seconds=self._timeout) < datetime.now():
             print('PortKnocking: timeout %s' % (src_ip))
             return 'DROP'
-        else:
+        elif (self._protocol == pywall_packet.get_protocol() and
+              self._port == payload.get_dst_port()):
             print('PortKnocking: accepting from %s' % (src_ip))
             return 'ACCEPT'
+        else:
+            print('PortKnocking: fall through from recognized ip: %s' % (src_ip))
+            return False
 
     def __call__(self, pywall_packet):
         return self.filter_condition(pywall_packet)
