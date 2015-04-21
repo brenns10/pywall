@@ -39,13 +39,27 @@ class PortKnocking(Rule):
         return final_doors
 
     def filter_condition(self, pywall_packet):
+        act_def = (0, datetime.now())
         src_ip = pywall_packet.get_src_ip()
         payload = pywall_packet.get_payload()
-        if payload:
-            print(payload.get_body())
 
-        i, last_activity = self._activity.get(src_ip, (0, datetime.now()))
-        if i < len(self._doors):
+        # get the latest activity
+        i, last_activity = self._activity.get(src_ip, act_def)
+        # clear if we have timed out
+        if last_activity + timedelta(seconds=self._timeout) < datetime.now():
+            print('PortKnocking: timeout -- fall through: %s' % (src_ip))
+            del self._activity[src_ip]
+            i, last_activity = act_def
+
+        if i >= len(self._doors):
+            if (self._protocol == pywall_packet.get_protocol() and
+                self._port == payload.get_dst_port()):
+                print('PortKnocking: accepting from %s' % (src_ip))
+                return 'ACCEPT'
+            else:
+                print('PortKnocking: fall through from recognized ip: %s' % (src_ip))
+                return False
+        else:
             cur_proto, cur_port = self._doors[i]
             if (cur_proto == pywall_packet.get_protocol() and
                 cur_port == payload.get_dst_port() and
@@ -55,19 +69,9 @@ class PortKnocking(Rule):
                 print('PortKnocking: advance to %d' % i)
                 return 'DROP'
             else:
-                print('PortKnocking: fall-through')
+                print('PortKnocking: unrecognized -- fall-through')
                 return False
-        elif last_activity + timedelta(seconds=self._timeout) < datetime.now():
-            print('PortKnocking: timeout %s' % (src_ip))
-            return 'DROP'
-        elif (self._protocol == pywall_packet.get_protocol() and
-              self._port == payload.get_dst_port()):
-            print('PortKnocking: accepting from %s' % (src_ip))
-            return 'ACCEPT'
-        else:
-            print('PortKnocking: fall through from recognized ip: %s' % (src_ip))
-            return False
-
+              
     def __call__(self, pywall_packet):
         return self.filter_condition(pywall_packet)
 

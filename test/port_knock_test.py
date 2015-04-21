@@ -23,7 +23,7 @@ class PKTest(PyWallTestCase):
                 s.settimeout(self._timeout)
                 s.bind(('', self._src_port))
                 try:
-                    s.connect(('localhost', port))
+                    s.connect(('', port))
                     s.close()
                 except socket.error:
                     # if firewall is doing its job, connection should be refused.
@@ -33,7 +33,7 @@ class PKTest(PyWallTestCase):
                 s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
                 s.settimeout(self._timeout)
                 s.bind(('', self._src_port))
-                s.sendto(self._body, ('localhost', port))
+                s.sendto(self._body, ('', port))
                 s.close()
             time.sleep(1)
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
