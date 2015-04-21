@@ -1,7 +1,7 @@
 """Rule matching ICMP packets."""
 
 from rules import Rule, register
-from packet import ICMPPacket
+from packets import ICMPPacket
 
 
 class ICMPRule(Rule):
@@ -13,7 +13,7 @@ class ICMPRule(Rule):
 class ICMPTypeCodeRule(ICMPRule):
 
     def __init__(self, **kwargs):
-        ICMPRule.__init__(self, kwargs)
+        ICMPRule.__init__(self, **kwargs)
         self.type = kwargs['type']
         self.codes = kwargs['codes']
 
