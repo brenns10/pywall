@@ -16,6 +16,20 @@ def payload_builder(payload_buff, protocol):
         return None
 
 
+def to_tuple(ippacket, flip=False):
+    payload = ippacket.get_payload()
+    if type(payload) is TCPPacket and not flip:
+        tup = (ippacket._src_ip, payload._src_port,  # remote
+               ippacket._dst_ip, payload._dst_port)  # local
+        return tup
+    elif type(payload) is TCPPacket and flip:
+        tup = (ippacket._dst_ip, payload._dst_port,  # remote
+               ippacket._src_ip, payload._src_port)  # local
+    else:
+        tup = None
+    return tup
+
+
 class Packet(object):
     """Base class for all packets"""
     __metaclass__ = ABCMeta

@@ -1,0 +1,10 @@
+Set up IPTables: iptables -I INPUT -j NFQUEUE --queue-num 1
+SND: ('23.23.170.248', 443, '172.20.47.240', 35139) (CLOSED): syn=True, ack=False, fin=False => SYN_SENT1
+SND: ('31.13.69.197', 443, '172.20.47.240', 36393) (CLOSED): syn=True, ack=False, fin=False => SYN_SENT1
+SND: ('74.125.201.189', 443, '172.20.47.240', 43811) (CLOSED): syn=False, ack=True, fin=False => ESTABLISHED
+SND: ('74.125.201.189', 443, '172.20.47.240', 43811) (ESTABLISHED): syn=False, ack=True, fin=False => ESTABLISHED
+SND: ('74.125.201.189', 443, '172.20.47.240', 43811) (ESTABLISHED): syn=False, ack=True, fin=False => ESTABLISHED
+Set up IPTables: iptables -I OUTPUT -j NFQUEUE --queue-num 2
+
+Tore down IPTables: iptables -D OUTPUT -j NFQUEUE --queue-num 2
+

@@ -30,6 +30,7 @@ class PyWallConTracker(object):
     def handle_ingress(self, report):
         tup, syn, ack, fin = report
         curr = self.connections.get(tup, 'CLOSED')
+        new = curr
         if curr == "CLOSED":
             if syn:
                 new = 'SYN_RCVD1'
@@ -93,6 +94,7 @@ class PyWallConTracker(object):
     def handle_egress(self, report):
         tup, syn, ack, fin = report
         curr = self.connections.get(tup, 'CLOSED')
+        new = curr
         if curr == 'CLOSED':
             if syn:
                 new = 'SYN_SENT1'
@@ -159,7 +161,7 @@ class PyWallConTracker(object):
               (tup, curr, syn, ack, fin, new))
 
     def handle_query(self, con_tuple):
-        return self.connections.get(con_tuple, 'ESTABLISHED')
+        self.query_pipe.send(self.connections.get(con_tuple, 'CLOSED'))
 
     def run(self):
         while True:

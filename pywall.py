@@ -2,17 +2,20 @@
 """Contains PyWall class, the main class for our Python firewall."""
 
 from __future__ import print_function
-from packets import IPPacket, TCPPacket
-import config
-import contrack
+from packets import IPPacket, TCPPacket, to_tuple
 
 import os
-import multiprocessing as mp
 
 import netfilterqueue as nfq
 
 _NFQ_INIT = 'iptables -I INPUT -j NFQUEUE --queue-num %d'
 _NFQ_CLOSE = 'iptables -D INPUT -j NFQUEUE --queue-num %d'
+_pipe = 'Yo'
+
+
+def get_pipe():
+    global _pipe
+    return _pipe
 
 
 class PyWall(object):
@@ -25,6 +28,8 @@ class PyWall(object):
 
     def __init__(self, tcp_queue, query_pipe, queue_num=1, default='DROP'):
         """Create a PyWall object, specifying NFQueue queue number."""
+        global _pipe
+        _pipe = query_pipe
         self.queue_num = queue_num
         self.tcp_queue = tcp_queue
         self.query_pipe = query_pipe
@@ -48,8 +53,7 @@ class PyWall(object):
             # We don't want to tell the connection tracker that we've accepted a
             # TCP connection until we're sure that we have.
             if type(payload) is TCPPacket:
-                tup = (pywall_packet._src_ip, payload._src_port,  # remote
-                       pywall_packet._dst_ip, payload._dst_port)  # local
+                tup = to_tuple(pywall_packet)
                 self.tcp_queue.put((tup, bool(payload.flag_syn),
                                     bool(payload.flag_ack),
                                     bool(payload.flag_fin)))
@@ -71,9 +75,7 @@ class PyWall(object):
     def callback(self, packet):
         """Accept packets from NFQueue."""
         pywall_packet = IPPacket(packet.get_payload())
-        payload = pywall_packet.get_payload()
         self._apply_chain(self._start, packet, pywall_packet)
-
 
     def run(self, **kwargs):
         """Run the PyWall!"""
@@ -97,14 +99,3 @@ class PyWall(object):
             teardown = _NFQ_CLOSE % self.queue_num
             os.system(teardown)
             print('\nTore down IPTables: ' + teardown)
-
-
-if __name__ == '__main__':
-    import sys
-    import config
-    if len(sys.argv) != 2:
-        print("usage: %s CONFIG-FILE" % (sys.argv[0]), file=sys.stderr)
-        sys.exit(1)
-    conf = config.PyWallConfig(sys.argv[1])
-    the_wall = conf.create_pywall()
-    the_wall.run()

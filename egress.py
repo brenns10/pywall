@@ -2,7 +2,7 @@
 """TCP Packet egress reporter."""
 
 from __future__ import print_function
-from packets import IPPacket, TCPPacket
+from packets import IPPacket, TCPPacket, to_tuple
 
 import os
 
@@ -46,8 +46,7 @@ class PyWallEgress(object):
             return
 
         # Send the packet to the connection tracker.
-        tup = (ip_packet._dst_ip, tcp_packet._dst_port,  # remote
-               ip_packet._src_ip, tcp_packet._src_port)    # local
+        tup = to_tuple(ip_packet, flip=True)
         self.mp_queue.put((tup, bool(tcp_packet.flag_syn),
                            bool(tcp_packet.flag_ack),
                            bool(tcp_packet.flag_fin)))
