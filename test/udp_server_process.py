@@ -4,16 +4,15 @@ import socket
 import select
 
 
-class TCPServerProcess(ServerProcess):
+class UDPServerProcess(ServerProcess):
     def __init__(self, port, timeout=5, expected_num_connections=1):
         self.port = port
         self.timeout = timeout
         self.expected_num_connections = expected_num_connections
 
     def setup_socket(self):
-        self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.sock.bind(('localhost', self.port))
-        self.sock.listen(5)
 
     def wait_socket(self):
         print('Waiting on server socket.')
@@ -21,5 +20,4 @@ class TCPServerProcess(ServerProcess):
         print(len(rlist))
         if len(rlist) > 0:
             print(str(rlist[0]))
-        self.sock.close()
         return (len(rlist) == self.expected_num_connections)

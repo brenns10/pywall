@@ -18,6 +18,7 @@ class TCPConnectionTest(PyWallTestCase):
         try:
             s.connect(('localhost', self.port))
         except socket.timeout:
+            print('socket timeout')
             return
 
 

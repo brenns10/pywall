@@ -1,0 +1,18 @@
+{
+    "default_chain": "DROP",
+    "INPUT": [
+        {"name": "PrintRule"},
+        {"name": "PortFilter",
+         "protocol": "TCP",
+         "dst_port": 80,
+         "action": "DROP"},
+        {"name": "PortFilter",
+         "protocol": "UDP",
+         "dst_port": 53,
+         "action": "DROP"},
+        {"name": "SourceIPRule",
+         "start_ip": "127.0.0.1",
+         "end_ip": "127.0.0.1",
+         "action": "ACCEPT"}
+    ]
+}

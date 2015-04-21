@@ -1,0 +1,19 @@
+{
+    "default_chain": "DROP",
+    "INPUT": [
+        {"name": "PortRangeFilter",
+         "protocol": "TCP",
+         "dst_lo": 49151,
+         "dst_hi": 65535,
+         "action": "DROP"},
+        {"name": "PortRangeFilter",
+         "protocol": "UDP",
+         "dst_lo": 49151,
+         "dst_hi": 65535,
+         "action": "DROP"},
+        {"name": "SourceIPRule",
+         "start_ip": "127.0.0.1",
+         "end_ip": "127.0.0.1",
+         "action": "ACCEPT"}
+    ]
+}
