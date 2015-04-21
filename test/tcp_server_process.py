@@ -18,8 +18,6 @@ class TCPServerProcess(ServerProcess):
     def wait_socket(self):
         print('Waiting on server socket.')
         rlist, _, __ = select.select([self.sock], [], [], self.timeout)
-        print(len(rlist))
-        if len(rlist) > 0:
-            print(str(rlist[0]))
+        print('rlist_len: %d' % (len(rlist)))
         self.sock.close()
         return (len(rlist) == self.expected_num_connections)
