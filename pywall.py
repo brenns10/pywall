@@ -62,7 +62,7 @@ class PyWall(object):
         pywall_packet = IPPacket(packet.get_payload())
         self._apply_chain(self._start, packet, pywall_packet)
 
-    def run(self):
+    def run(self, **kwargs):
         """Run the PyWall!"""
         # Setup firewall rule.
         setup = _NFQ_INIT % self.queue_num
@@ -78,6 +78,10 @@ class PyWall(object):
         # Bind and run NFQ.
         nfqueue = nfq.NetfilterQueue()
         nfqueue.bind(self.queue_num, self.callback)
+        if kwargs.get('test', False):
+            lock = kwargs.get('lock', None)
+            if lock:
+                lock.release()
         try:
             nfqueue.run()
         finally:
@@ -89,6 +93,7 @@ class PyWall(object):
 
 if __name__ == '__main__':
     import sys
+    import config
     if len(sys.argv) != 2:
         print("usage: %s CONFIG-FILE" % (sys.argv[0]), file=sys.stderr)
         sys.exit(1)
