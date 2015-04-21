@@ -17,6 +17,8 @@ class SourceIPRuleTest(PyWallTestCase):
             s.connect(('localhost', self.port))
         except socket.timeout:
             return
+        finally:
+            s.close()
 
 
 tests = [
