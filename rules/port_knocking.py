@@ -11,6 +11,7 @@ class PortKnocking(Rule):
         self._port = kwargs.get('port', None)
         self._src_port = kwargs.get('src_port', None)
         self._body = kwargs.get('body' 'knock-knock')
+        self._timeout = kwargs.get('timeout', 60)
         self._doors = self._convert_doors(kwargs.get('doors', []))
         self._activity = {}  # IP -> (state, timestamp)
 
@@ -35,21 +36,24 @@ class PortKnocking(Rule):
         if payload:
             print(payload.get_body())
 
-        i = self._activity.get(src_ip, 0)
+        i, last_activity = self._activity.get(src_ip, (0, datetime.now()))
         if i < len(self._doors):
             cur_proto, cur_port = self._doors[i]
             if (cur_proto == pywall_packet.get_protocol() and
                 cur_port == payload.get_dst_port() and
                 self._src_port == payload.get_src_port()):
                 i += 1
-                self._activity[src_ip] = i
+                self._activity[src_ip] = (i, datetime.now())
                 print('PortKnocking: advance to %d' % i)
                 return 'DROP'
             else:
                 print('PortKnocking: fall-through')
                 return False
+        elif last_activity + timedelta(seconds=self._timeout) < datetime.now():
+            print('PortKnocking: timeout %s' % (src_ip))
+            return 'DROP'
         else:
-            print('PortKnocking: Accepting from %s' % (src_ip))
+            print('PortKnocking: accepting from %s' % (src_ip))
             return 'ACCEPT'
 
     def __call__(self, pywall_packet):
