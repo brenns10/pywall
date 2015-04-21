@@ -1,0 +1,10 @@
+{
+    "default_chain": "ACCEPT",
+    "INPUT":[
+        {"name":"PrintRule"},
+        {"name":"PortKnocking",
+         "src_port": 9001,
+         "port": 2222,
+         "doors": [["UDP", 49001], ["UDP", 49011]]}
+    ]
+}
