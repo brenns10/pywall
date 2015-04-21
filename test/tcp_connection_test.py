@@ -1,7 +1,8 @@
 #!/usr/bin/env python2
 
 from pywall_test_case import PyWallTestCase, ServerProcess
-
+import socket
+import select
 
 class TCPServerProcess(ServerProcess):
     def __init__(self, port, timeout=5):
@@ -34,7 +35,4 @@ class TCPConnectionTest(PyWallTestCase):
             return
 
 
-if __name__ == '__main__':
-    print('hi')
-    test = TCPConnectionTest('tcp_connection.json', 58008, client_timeout=1, server_timeout=5)
-    test.run()
+test_class = TCPConnectionTest('test/tcp_connection.json', 58008, client_timeout=1, server_timeout=5)

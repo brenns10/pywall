@@ -51,11 +51,7 @@ class PyWallTestCase(object):
         time.sleep(self.server_sleep_time)
         self.client_request()
         self.server_process.join()
-        if self.queue.get():
-            print('TEST PASSED')
-        else:
-            print('TEST FAILED')
+        passed = self.queue.get()
         os.kill(self.wall_process.pid, signal.SIGINT)
         self.wall_process.join()
-        print('Test over')
-
+        return passed
