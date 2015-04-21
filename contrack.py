@@ -87,13 +87,15 @@ class PyWallConTracker(object):
             print('INVALID (%s)' % curr)
             new = curr
         self.connections[tup] = new
+        print('RCV: %r (%s): syn=%r, ack=%r, fin=%r => %s' %
+              (tup, curr, syn, ack, fin, new))
 
     def handle_egress(self, report):
         tup, syn, ack, fin = report
         curr = self.connections.get(tup, 'CLOSED')
         if curr == 'CLOSED':
             if syn:
-                new = 'SYN_SENT'
+                new = 'SYN_SENT1'
             else:  # Assume this was running before hand.
                 new = 'ESTABLISHED'
         elif curr == 'SYN_RCVD1':
@@ -153,6 +155,8 @@ class PyWallConTracker(object):
             print('INVALID: (%s)' % curr)
             new = curr
         self.connections[tup] = new
+        print('SND: %r (%s): syn=%r, ack=%r, fin=%r => %s' %
+              (tup, curr, syn, ack, fin, new))
 
     def handle_query(self, con_tuple):
         return self.connections.get(con_tuple, 'ESTABLISHED')
