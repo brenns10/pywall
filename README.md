@@ -1,7 +1,7 @@
 PyWall
 ======
 
-A Python firewall (for academic purposes).
+A Python firewall: Because slow networks are secure networks.
 
 Running
 -------
