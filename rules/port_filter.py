@@ -62,11 +62,13 @@ class PortRangeFilter(Rule):
         return valid
 
     def filter_condition(self, packet):
+        src_port = packet.get_payload().get_src_port()
+        dst_port = packet.get_payload().get_dst_port()
         match = (packet.get_protocol() == self._protocol)
-        match = match and (self._src_range == (None, None) or
-                           (self._src_lo <= packet.get_payload().get_src_port() <= self._src_hi))
-        match = match and (self._dst_range == (None, None) or
-                           (self._dst_lo <= packet.get_payload().get_dst_port() <= self._dst_hi))
+        match = match and ((self._src_range == (None, None)) or
+                           (self._src_lo <= src_port <= self._src_hi))
+        match = match and ((self._dst_range == (None, None)) or
+                           (self._dst_lo <= dst_port <= self._dst_hi))
         if match:
             print('PortRangeFilter: %s' % str(self._action))
         return match
