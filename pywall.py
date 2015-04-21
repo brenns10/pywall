@@ -4,8 +4,10 @@
 from __future__ import print_function
 from packets import IPPacket
 import config
+import contrack
 
 import os
+import multiprocessing as mp
 
 import netfilterqueue as nfq
 
@@ -66,6 +68,12 @@ class PyWall(object):
         setup = _NFQ_INIT % self.queue_num
         os.system(setup)
         print('Set up IPTables: ' + setup)
+
+        # Run the connection tracker.
+        self.mp_queue = mp.Queue()
+        self.contracker = mp.Process(target=contrack.run_contrack,
+                                     args=(self.mp_queue,))
+        self.contracker.start()
 
         # Bind and run NFQ.
         nfqueue = nfq.NetfilterQueue()
