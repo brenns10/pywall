@@ -45,6 +45,9 @@ class Packet(object):
 class TransportLayerPacket(Packet):
     """Base class packets at the transport layer """
     __metaclass__ = ABCMeta
+    @abstractmethod
+    def get_body(self):
+        pass
 
 
 class IPPacket(Packet):
@@ -87,6 +90,12 @@ class IPPacket(Packet):
     def get_payload(self):
         return self._payload
 
+    def get_src_ip(self):
+        return self._src_ip
+
+    def get_dst_ip(self):
+        return self._dst_ip
+
     def __unicode__(self):
         """Returns a printable 'string' representation of the IPHeader"""
         return u'IP from %s to %s, id=%d, pload_t=%s' % (self._src_ip, self._dst_ip,
@@ -113,6 +122,7 @@ class TCPPacket(TransportLayerPacket):
         self._checksum, self._urg_ptr = unpack('!HH', buff[16:20])
         self._options = buff[20:(self._data_offset * 4)]  # can be parsed later if we care
         self._total_length = len(buff)
+        self._body = buff[self.get_header_len():]
 
     def get_header_len(self):
         return self._data_offset * 4
@@ -125,6 +135,9 @@ class TCPPacket(TransportLayerPacket):
     
     def get_dst_port(self):
         return self._dst_port
+
+    def get_body(self):
+        return str(self._body)
 
     def __unicode__(self):
         """Returns a printable version of the TCP header"""
@@ -139,6 +152,7 @@ class UDPPacket(TransportLayerPacket):
         self._src_port, self._dst_port = unpack('!HH', buff[0:4])
         self._length, self._checksum = unpack('!HH', buff[4:8])
         self._total_length = len(buff)
+        self._body = buff[self.get_header_len():]
 
     def get_header_len(self):
         return 8
@@ -151,6 +165,10 @@ class UDPPacket(TransportLayerPacket):
     
     def get_dst_port(self):
         return self._dst_port
+
+    def get_body(self):
+        return str(self._body)
+
 
     def __unicode__(self):
         """Returns a printable version of the UDP header"""
