@@ -2,8 +2,7 @@
     "default_chain": "DROP",
     "INPUT": [
         {"name": "SourceIPRule",
-         "start_ip": "127.0.0.1",
-         "end_ip": "127.0.0.1",
+         "cidr_range": "127.0.0.1",
          "action": "ACCEPT"}
     ]
 }

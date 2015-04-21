@@ -6,7 +6,7 @@ class IPRangeRule(Rule):
     """Filter IP packets based on source/dest address."""
     def __init__(self, **kwargs):
         Rule.__init__(self, **kwargs)
-        self._ip_range = netaddr.IPRange(kwargs['start_ip'], kwargs['end_ip'])
+        self._ip_range = netaddr.IPNetwork(kwargs['cidr_range'])
 
 class SourceIPRule(IPRangeRule):
     """Filter IP packets based on source address"""
