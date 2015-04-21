@@ -12,6 +12,10 @@ if __name__ == '__main__':
         modules = sys.argv[1:]
     else:
         modules = glob.glob(os.path.join(os.path.dirname(__file__), 'test', '*_test.py'))
+<<<<<<< HEAD
+=======
+        print(modules)
+>>>>>>> 88ee7d924c3dfc4c9e856ebe6d6a4bbdc85f698a
     test_results = []
     for module in modules:
         module_name = module[2:-3].replace('/', '.')
