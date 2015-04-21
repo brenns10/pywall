@@ -2,7 +2,7 @@
 """Contains PyWall class, the main class for our Python firewall."""
 
 from __future__ import print_function
-from packets import IPPacket
+from packets import IPPacket, TCPPacket, to_tuple
 
 import os
 
@@ -10,6 +10,12 @@ import netfilterqueue as nfq
 
 _NFQ_INIT = 'iptables -I INPUT -j NFQUEUE --queue-num %d'
 _NFQ_CLOSE = 'iptables -D INPUT -j NFQUEUE --queue-num %d'
+_pipe = 'Yo'
+
+
+def get_pipe():
+    global _pipe
+    return _pipe
 
 
 class PyWall(object):
@@ -20,9 +26,13 @@ class PyWall(object):
     or drops the packets.
     """
 
-    def __init__(self, queue_num=1, default='DROP'):
+    def __init__(self, tcp_queue, query_pipe, queue_num=1, default='DROP'):
         """Create a PyWall object, specifying NFQueue queue number."""
+        global _pipe
+        _pipe = query_pipe
         self.queue_num = queue_num
+        self.tcp_queue = tcp_queue
+        self.query_pipe = query_pipe
         self.chains = {'INPUT': [], 'ACCEPT': None, 'DROP': None}
         self.default = default
         self._start = 'INPUT'
@@ -39,6 +49,14 @@ class PyWall(object):
     def _apply_chain(self, chain, nfqueue_packet, pywall_packet):
         """Run the packet through a chain."""
         if chain == 'ACCEPT':
+            payload = pywall_packet.get_payload()
+            # We don't want to tell the connection tracker that we've accepted a
+            # TCP connection until we're sure that we have.
+            if type(payload) is TCPPacket:
+                tup = to_tuple(pywall_packet)
+                self.tcp_queue.put((tup, bool(payload.flag_syn),
+                                    bool(payload.flag_ack),
+                                    bool(payload.flag_fin)))
             nfqueue_packet.accept()
         elif chain == 'DROP':
             nfqueue_packet.drop()
@@ -73,6 +91,7 @@ class PyWall(object):
             lock = kwargs.get('lock', None)
             if lock:
                 lock.release()
+
         try:
             nfqueue.run()
         finally:
@@ -80,14 +99,3 @@ class PyWall(object):
             teardown = _NFQ_CLOSE % self.queue_num
             os.system(teardown)
             print('\nTore down IPTables: ' + teardown)
-
-
-if __name__ == '__main__':
-    import sys
-    import config
-    if len(sys.argv) != 2:
-        print("usage: %s CONFIG-FILE" % (sys.argv[0]), file=sys.stderr)
-        sys.exit(1)
-    conf = config.PyWallConfig(sys.argv[1])
-    the_wall = conf.create_pywall()
-    the_wall.run()
