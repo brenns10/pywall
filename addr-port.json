@@ -2,7 +2,7 @@
     "default_chain": "ACCEPT",
     "INPUT":[
         {"name":"PrintRule"},
-        {"name":"AdressPortRule",
+        {"name":"AddressPortRule",
          "protocol": "TCP",
          "dst_lo": 2222,
          "dst_hi": 2222,
