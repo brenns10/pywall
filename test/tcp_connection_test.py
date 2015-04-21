@@ -35,4 +35,6 @@ class TCPConnectionTest(PyWallTestCase):
             return
 
 
-test_class = TCPConnectionTest('test/tcp_connection.json', 58008, client_timeout=1, server_timeout=5)
+tests = [
+    ('TCPConnectionTest', TCPConnectionTest('test/tcp_connection.json', 58008, client_timeout=1, server_timeout=5)),
+]

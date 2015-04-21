@@ -13,12 +13,12 @@ if __name__ == '__main__':
         print('Importing module: %s' % module_name)
         mod = import_module(module_name, '')
         print('Running module: %s' % module_name)
-        tc = getattr(mod, 'test_class')
-        result = tc.run()
-        if result:
-            print('Test PASSED!')
-        else:
-            print('Test FAILED!')
-
-
+        tests = getattr(mod, 'tests')
+        for test_name, test_class in tests:
+            print('Running test: %s' % test_name)
+            result = test_class.run()
+            if result:
+                print('Test PASSED!')
+            else:
+                print('Test FAILED!')
     print('yay!')
