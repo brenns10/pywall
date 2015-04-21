@@ -2,7 +2,7 @@
 """Contains PyWall class, the main class for our Python firewall."""
 
 from __future__ import print_function
-from packets import IPPacket
+from packets import IPPacket, TCPPacket
 import config
 import contrack
 
@@ -23,9 +23,11 @@ class PyWall(object):
     or drops the packets.
     """
 
-    def __init__(self, queue_num=1, default='DROP'):
+    def __init__(self, tcp_queue, query_pipe, queue_num=1, default='DROP'):
         """Create a PyWall object, specifying NFQueue queue number."""
         self.queue_num = queue_num
+        self.tcp_queue = tcp_queue
+        self.query_pipe = query_pipe
         self.chains = {'INPUT': [], 'ACCEPT': None, 'DROP': None}
         self.default = default
         self._start = 'INPUT'
@@ -42,6 +44,15 @@ class PyWall(object):
     def _apply_chain(self, chain, nfqueue_packet, pywall_packet):
         """Run the packet through a chain."""
         if chain == 'ACCEPT':
+            payload = pywall_packet.get_payload()
+            # We don't want to tell the connection tracker that we've accepted a
+            # TCP connection until we're sure that we have.
+            if type(payload) is TCPPacket:
+                tup = (pywall_packet._src_ip, payload._src_port,  # remote
+                       pywall_packet._dst_ip, payload._dst_port)  # local
+                self.tcp_queue.put((tup, bool(payload.flag_syn),
+                                    bool(payload.flag_ack),
+                                    bool(payload.flag_fin)))
             nfqueue_packet.accept()
         elif chain == 'DROP':
             nfqueue_packet.drop()
@@ -60,7 +71,9 @@ class PyWall(object):
     def callback(self, packet):
         """Accept packets from NFQueue."""
         pywall_packet = IPPacket(packet.get_payload())
+        payload = pywall_packet.get_payload()
         self._apply_chain(self._start, packet, pywall_packet)
+
 
     def run(self, **kwargs):
         """Run the PyWall!"""
@@ -69,12 +82,6 @@ class PyWall(object):
         os.system(setup)
         print('Set up IPTables: ' + setup)
 
-        # Run the connection tracker.
-        self.mp_queue = mp.Queue()
-        self.contracker = mp.Process(target=contrack.run_contrack,
-                                     args=(self.mp_queue,))
-        self.contracker.start()
-
         # Bind and run NFQ.
         nfqueue = nfq.NetfilterQueue()
         nfqueue.bind(self.queue_num, self.callback)
@@ -82,6 +89,7 @@ class PyWall(object):
             lock = kwargs.get('lock', None)
             if lock:
                 lock.release()
+
         try:
             nfqueue.run()
         finally:

@@ -2,68 +2,50 @@
 """TCP Connection Tracking."""
 
 from __future__ import print_function
-from packets import IPPacket, TCPPacket
 
-import os
-
-import netfilterqueue as nfq
+import Queue
 
 
 class PyWallConTracker(object):
+    """Central TCP connection tracking process and class.
 
-    def __init__(self, mp_queue, queue_num=2, test=False):
-        self.queue_num = queue_num
-        self.mp_queue = mp_queue
-        self._nfq_init = 'iptables -I OUTPUT -j NFQUEUE --queue-num %d'
-        self._nfq_close = 'iptables -D OUTPUT -j NFQUEUE --queue-num %d'
-        if test:
-            self._nfq_init = 'iptables -I OUTPUT -i lo -j NFQUEUE --queue-num %d'
-            self._nfq_close = 'iptables -D OUTPUT -i lo -j NFQUEUE --queue-num %d'
+    Receives TCP packets from ingress and egress, and updates connection status
+    accordingly.  Also, receives connection status queries from the firewall,
+    and responds to them.
+
+    Connection tuple is defined as:
+    (remote_ip, remote_port, local_ip, local_port)
+
+    Objects placed into the queues should be:
+    (connection tuple, syn, ack, fin)
+
+    """
+
+    def __init__(self, ingress_queue, egress_queue, query_pipe):
+        self.ingress_queue = ingress_queue
+        self.egress_queue = egress_queue
+        self.query_pipe = query_pipe
         self.connections = {}
 
-    def run(self):
-        setup = self._nfq_init % self.queue_num
-        teardown = self._nfq_close % self.queue_num
+    def handle_ingress(self, con_tuple):
+        pass
 
-        os.system(setup)
-        print('Set up IPTables: ' + setup)
-
-        nfqueue = nfq.NetfilterQueue()
-        nfqueue.bind(self.queue_num, self.callback)
-        try:
-            nfqueue.run()
-        finally:
-            os.system(teardown)
-            print('\nTore down IPTables: ' + teardown + '\n')
-
-    def callback(self, packet):
-        # Parse packet
-        ip_packet = IPPacket(packet.get_payload())
-        tcp_packet = ip_packet.get_payload()
-
-        # Accept non-TCP packets.
-        if type(tcp_packet) is not TCPPacket:
-            packet.accept()
-            return
-
-        # Attempt to follow along with the TCP state diagram (with only one side
-        # of the communication).
-        tup = (ip_packet._src_ip, tcp_packet._src_port, ip_packet._dest_ip,
-               tcp_packet._dest_port)
+    def handle_egress(self, report):
+        tup, syn, ack, fin = report
         curr = self.connections.get(tup, 'CLOSED')
         if curr == 'CLOSED':
-            if tcp_packet.flag_syn:
+            if syn:
                 new = 'SYN_SENT'
             else:
                 new = 'ESTABLISHED'
                 print('Outbound packet in closed connection, entering ESTABLISHED.')
         elif curr == 'SYN_SENT':
-            if not tcp_packet.flag_fin:
+            if not fin:
                 new = 'ESTABLISHED'
             else:
                 new = 'CLOSED'
         elif curr == 'ESTABLISHED':
-            if tcp_packet.flag_fin:
+            if fin:
                 # Remote is closing connection.
                 new = 'CLOSE_WAIT'
             else:
@@ -72,19 +54,24 @@ class PyWallConTracker(object):
             new = 'CLOSED'
         else:
             new = 'CLOSED'
-
-        print('%r, state=%s: SYN=%r, ACK=%r, FIN=%r, new=%s' %
-              (tup, curr, bool(tcp_packet.flag_syn), bool(tcp_packet.flag_ack),
-               bool(tcp_packet.flag_fin), new))
-        # Update pywall on the new connection state.
-        if curr != new:
-            #self.mp_queue.put((tup, new))
-            pass
         self.connections[tup] = new
-        #print(self.connections)
-        packet.accept()
 
+    def handle_query(self, con_tuple):
+        return self.connections.get(con_tuple, 'ESTABLISHED')
 
-def run_contrack(queue):
-    ct = PyWallConTracker(queue)
-    ct.run()
+    def run(self):
+        while True:
+            try:
+                egress_packet = self.egress_queue.get_nowait()
+                self.handle_egress(egress_packet)
+            except Queue.Empty:
+                pass
+
+            try:
+                ingess_packet = self.ingress_queue.get_nowait()
+                self.handle_ingress(ingess_packet)
+            except Queue.Empty:
+                pass
+
+            if self.query_pipe.poll():
+                self.handle_query(self.query_pipe.recv())
