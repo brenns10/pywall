@@ -20,4 +20,5 @@ class UDPServerProcess(ServerProcess):
         print(len(rlist))
         if len(rlist) > 0:
             print(str(rlist[0]))
+        self.sock.close()
         return (len(rlist) == self.expected_num_connections)
