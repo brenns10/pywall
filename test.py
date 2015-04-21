@@ -6,8 +6,13 @@ import sys
 import os
 import glob
 
+
 if __name__ == '__main__':
-    modules = glob.glob(os.path.join(os.path.dirname(__file__), 'test', '*_test.py'))
+    if len(sys.argv) > 1:
+        modules = sys.argv[1:]
+    else:
+        modules = glob.glob(os.path.join(os.path.dirname(__file__), 'test', '*_test.py'))
+        print(modules)
     test_results = []
     for module in modules:
         module_name = module[2:-3].replace('/', '.')
