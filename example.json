@@ -1,5 +1,17 @@
 {
+    "default_chain": "ACCEPT",
     "INPUT":[
-        {"name":"PrintRule"}
+        {"name":"PrintRule"},
+        {"name":"TCPRule",
+         "action": "TCP"},
+        {"name": "TrueRule",
+         "action": "ACCEPT"}
+    ],
+    "TCP":[
+        {"name":"TCPStateRule",
+         "match_if": ["CLOSED"],
+         "action": "DROP"},
+        {"name": "TrueRule",
+         "action": "ACCEPT"}
     ]
 }
