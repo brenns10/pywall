@@ -42,6 +42,7 @@ class PyWallTestCase(object):
                                           args=(self.queue,))
 
     def run(self):
+        time.sleep(self.server_sleep_time)
         sem = mp.Semaphore(0)
         self.wall_process = mp.Process(target=run_pywall,
                                        args=(self.config_filename,), kwargs={'test':True, 'lock':sem})
