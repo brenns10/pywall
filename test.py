@@ -28,7 +28,6 @@ if __name__ == '__main__':
             else:
                 print('Test FAILED!')
             test_results.append((test_name, result))
-    print(len(test_results))
     print("P:F = %d:%d" % (len([test_name for test_name, result in test_results if result]),
                            len([test_name for test_name, result in test_results if not result])))
     print('yay!')
