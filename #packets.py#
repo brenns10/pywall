@@ -221,11 +221,7 @@ class ICMPPacket(TransportLayerPacket):
         self.type, self.code, self.checksum = unpack('!BBH', buf[0:4])
         self.rest = buf[4:8]
 
-    def get_header_len(self):
-        return 4
-
-    def get_data_len(self):
-        return 4
+    def get_header_len(self
 
     def __unicode__(self):
         return u'ICMP Type %d (%s) Code %d (%s)' % \
