@@ -1,0 +1,9 @@
+{
+    "default_chain": "ACCEPT",
+    "INPUT": [
+        {"name": "DestinationIPRule",
+         "start_ip": "127.0.255.0",
+         "end_ip": "127.0.255.255",
+         "action": "DROP"}
+    ]
+}
