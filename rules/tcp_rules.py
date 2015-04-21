@@ -28,10 +28,8 @@ class TCPStateRule(TCPRule):
         if not TCPRule.filter_condition(self, pywall_packet):
             return False
         pipe = get_pipe()
-        print('request state')
         pipe.send(to_tuple(pywall_packet))
         state = pipe.recv()
-        print('receive state %s' % state)
         return state in self.match_if and state not in self.match_if_not
 
 

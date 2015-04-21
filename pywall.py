@@ -95,6 +95,8 @@ class PyWall(object):
 
         try:
             nfqueue.run()
+        except KeyboardInterrupt:
+            pass
         finally:
             # Always remove the firewall rule when we're done.
             teardown = _NFQ_CLOSE % self.queue_num
