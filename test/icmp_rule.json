@@ -1,0 +1,10 @@
+{
+    "default_chain": "ACCEPT",
+    "INPUT": [
+        {"name": "PrintRule"},
+        {"name": "ICMPTypeCodeRule",
+         "type": 8,
+         "codes": [0],
+         "action": "DROP"}
+    ]
+}
