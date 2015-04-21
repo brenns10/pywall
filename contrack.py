@@ -3,6 +3,7 @@
 
 from __future__ import print_function
 
+import select
 import Queue
 
 
@@ -165,17 +166,16 @@ class PyWallConTracker(object):
 
     def run(self):
         while True:
-            try:
-                egress_packet = self.egress_queue.get_nowait()
-                self.handle_egress(egress_packet)
-            except Queue.Empty:
-                pass
-
-            try:
-                ingess_packet = self.ingress_queue.get_nowait()
-                self.handle_ingress(ingess_packet)
-            except Queue.Empty:
-                pass
-
-            if self.query_pipe.poll():
-                self.handle_query(self.query_pipe.recv())
+            egress_fd = self.egress_queue._reader.fileno()
+            ingress_fd = self.ingress_queue._reader.fileno()
+            query_fd = self.query_pipe.fileno()
+            ready, _, _ = select.select([egress_fd, ingress_fd, query_fd], [], [])
+            for ready_fd in ready:
+                if ready_fd == egress_fd:
+                    egress_packet = self.egress_queue.get_nowait()
+                    self.handle_egress(egress_packet)
+                elif ready_fd == ingress_fd:
+                    ingess_packet = self.ingress_queue.get_nowait()
+                    self.handle_ingress(ingess_packet)
+                elif ready_fd == query_fd:
+                    self.handle_query(self.query_pipe.recv())
