@@ -11,13 +11,8 @@ import select
 
 
 def run_pywall(config_file, **kwargs):
-    import pywall
-    from config import PyWallConfig
-    pywall._NFQ_INIT = 'iptables -I INPUT -i lo -j NFQUEUE --queue-num %d'
-    pywall._NFQ_CLOSE = 'iptables -D INPUT -i lo -j NFQUEUE --queue-num %d'
-    conf = PyWallConfig(config_file)
-    wall = conf.create_pywall()
-    wall.run(**kwargs)
+    import main
+    main.run_pywall(config_file, None, None, kwargs)
 
 
 class ServerProcess(object):
