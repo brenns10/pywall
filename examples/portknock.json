@@ -1,0 +1,15 @@
+{
+    "default_chain": "ACCEPT",
+    "INPUT":[
+        {"name":"PrintRule"},
+        {"name":"PortKnocking",
+         "src_port": 9001,
+         "protocol": "TCP",
+         "port": 2222,
+         "timeout": 20,
+         "doors": [["TCP", 49001], ["UDP", 49011]]},
+        {"name":"TCPStateRule",
+         "match_if": ["CLOSED"],
+         "action": "DROP"}
+    ]
+}
