@@ -14,11 +14,18 @@ if __name__ == '__main__':
         mod = import_module(module_name, '')
         print('Running module: %s' % module_name)
         tests = getattr(mod, 'tests')
+        test_results = []
         for test_name, test_class in tests:
             print('Running test: %s' % test_name)
-            result = test_class.run()
+            try:
+                result = test_class.run()
+            except:
+                result = False
             if result:
                 print('Test PASSED!')
             else:
                 print('Test FAILED!')
+            test_results.append((test_name, result))
+    print("P:F = %d:%d" % (len(filter(lambda x: x[1], test_results)),
+                           len(filter(lambda x: not x[1], test_results))))
     print('yay!')
