@@ -1,6 +1,5 @@
 from __future__ import unicode_literals
 from struct import unpack
-from struct import pack
 from abc import ABCMeta
 from abc import abstractmethod
 import socket
@@ -33,13 +32,36 @@ def to_tuple(ippacket, flip=False):
 class Packet(object):
     """Base class for all packets"""
     __metaclass__ = ABCMeta
+
+    def __init__(self, buf):
+        """Create packet from raw data."""
+        self.buf = buf
+        self._src_ip = socket.inet_ntoa(buf[12:16])
+        self._dst_ip = socket.inet_ntoa(buf[16:20])
+        # Internal Header Length, in bytes
+        self._ihl = ((unpack('!B', buf[0]) & 0xF0) >> 4) * 4
+        self._proto = unpack('!B', buf[9])
+        self._payload = payload_builder(buf[self._ihl:], self._proto)
+
+    def get_src_ip(self):
+        return self._src_ip
+
+    def get_dst_ip(self):
+        return self._dst_ip
+
+    def get_protocol(self):
+        return self._proto
+
+    def get_payload(self):
+        return self._payload
+
     @abstractmethod
     def get_header_len(self):
-        pass
+        return self._ihl
 
     @abstractmethod
     def get_data_len(self):
-        pass
+        return len(self.buf) - self._ihl
 
 
 class TransportLayerPacket(Packet):
