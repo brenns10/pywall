@@ -19,12 +19,12 @@ def payload_builder(payload_buff, protocol):
 def to_tuple(ippacket, flip=False):
     payload = ippacket.get_payload()
     if type(payload) is TCPPacket and not flip:
-        tup = (ippacket._src_ip, payload._src_port,  # remote
-               ippacket._dst_ip, payload._dst_port)  # local
+        tup = (ippacket.get_src_ip(), payload.get_src_port(),  # remote
+               ippacket.get_dst_ip(), payload.get_dst_port())  # local
         return tup
     elif type(payload) is TCPPacket and flip:
-        tup = (ippacket._dst_ip, payload._dst_port,  # remote
-               ippacket._src_ip, payload._src_port)  # local
+        tup = (ippacket.get_dst_ip(), payload.get_dst_port(),  # remote
+               ippacket.get_src_ip(), payload.get_src_port())  # local
     else:
         tup = None
     return tup
@@ -49,57 +49,7 @@ class TransportLayerPacket(Packet):
     def get_body(self):
         pass
 
-
-class IPPacket(Packet):
-    """
-    Builds a packet object from a raw IP datagram stream.
-
-    If possible, also builds the packet object of the payload.
-    Reference: http://www.binarytides.com/raw-socket-programming-in-python-linux/
-
-    The original version of class was also used in Jeff's EECS 325 project 2.
-    Might be worth checking with Podgurski before continuing.
-    """
-    def __init__(self, buff):
-        self._parse_header(buff)
-        self._payload = payload_builder(buff[self.get_header_len():], self._protocol)
-
-    def _parse_header(self, buff):
-        v_ihl, dscp_ecn, self._total_length = unpack('!BBH', buff[0:4])
-        self._version = (v_ihl >> 4) & 0xF
-        self._ihl = v_ihl & 0xF
-        self._dscp = (dscp_ecn >> 3) & 0x1F
-        self._ecn = dscp_ecn & 0x7
-        self._id, flag_frag = unpack('!HH', buff[4:8])
-        self._flags = (flag_frag >> 13) & 0x7
-        self._frag_offset = flag_frag & 0x1FFF
-        self._ttl, self._protocol, self._checksum = unpack('!BBH', buff[8:12])
-        self._src_ip = socket.inet_ntoa(buff[12:16])
-        self._dst_ip = socket.inet_ntoa(buff[16:20])
-        self._options = buff[20:(self._ihl * 4)]  # can be parsed later if we care
-
-    def get_header_len(self):
-        return self._ihl * 4
-
-    def get_data_len(self):
-        return self._total_length - self._ihl * 4
-
-    def get_protocol(self):
-        return self._protocol
-
-    def get_payload(self):
-        return self._payload
-
-    def get_src_ip(self):
-        return self._src_ip
-
-    def get_dst_ip(self):
-        return self._dst_ip
-
-    def __unicode__(self):
-        """Returns a printable 'string' representation of the IPHeader"""
-        return u'IP from %s to %s, id=%d, pload_t=%s' % (self._src_ip, self._dst_ip,
-                                                           self._id, self._payload)
+# IPPacket class should go here
 
 class TCPPacket(TransportLayerPacket):
     def __init__(self, buff):
