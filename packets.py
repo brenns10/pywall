@@ -209,7 +209,7 @@ class IPPacket(Packet):
         self._src_ip = socket.inet_ntoa(buf[12:16])
         self._dst_ip = socket.inet_ntoa(buf[16:20])
         # Internal Header Length, in bytes
-        self._ihl = ((unpack('!B', buf[0])[0] & 0xF0) >> 4) * 4
+        self._ihl = (unpack('!B', buf[0])[0] & 0xF) * 4
         self._proto = unpack('!B', buf[9])[0]
         self._payload = payload_builder(buf[self._ihl:], self._proto)
 
