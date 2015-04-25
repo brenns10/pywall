@@ -1,0 +1,12 @@
+{
+    "default_chain": "ACCEPT",
+    "INPUT":[
+        {"name":"PrintRule"},
+        {"name":"AddressPortRule",
+         "protocol": "TCP",
+         "dst_lo": 2222,
+         "dst_hi": 2222,
+         "src_ip": "172.20.33.164",
+         "action": "DROP"}
+    ]
+}

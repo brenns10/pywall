@@ -1,6 +1,7 @@
 {
     "default_chain": "ACCEPT",
     "INPUT":[
+        {"name":"PrintRule"},
         {"name":"TCPStateRule",
          "match_if": ["CLOSED"],
          "action": "DROP"}
