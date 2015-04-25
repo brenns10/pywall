@@ -5,6 +5,7 @@ from __future__ import print_function
 from packets import IPPacket, TCPPacket, to_tuple
 
 import os
+import logging
 
 import netfilterqueue as nfq
 
@@ -39,6 +40,7 @@ class PyWallEgress(object):
         # Parse packet
         ip_packet = IPPacket(packet.get_payload())
         tcp_packet = ip_packet.get_payload()
+        logging.getLogger('pywall.egress').debug(unicode(ip_packet))
 
         # Accept non-TCP packets.
         if type(tcp_packet) is not TCPPacket:

@@ -3,3 +3,4 @@ venv
 *.pyc
 *.pyo
 *.pyd
+*.log
