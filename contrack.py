@@ -52,7 +52,9 @@ class PyWallConTracker(object):
             else:
                 new = 'ESTABLISHED'
         elif curr == 'FIN_WAIT_1':
-            if ack:
+            if fin and ack:
+                new = 'CLOSING2'
+            elif ack:
                 new = 'FIN_WAIT_2'
             elif fin:
                 new = 'CLOSING'
