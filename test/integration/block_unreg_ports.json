@@ -1,0 +1,26 @@
+{
+    "default_chain": "ACCEPT",
+    "INPUT": [
+        {"name": "PrintRule"},
+        {"name": "PortRangeFilter",
+         "protocol": "TCP",
+         "src_lo": 49151,
+         "src_hi": 65535,
+         "action": "DROP"},
+        {"name": "PortRangeFilter",
+         "protocol": "TCP",
+         "dst_lo": 49151,
+         "dst_hi": 65535,
+         "action": "DROP"},
+        {"name": "PortRangeFilter",
+         "protocol": "UDP",
+         "src_lo": 49151,
+         "src_hi": 65535,
+         "action": "DROP"},
+        {"name": "PortRangeFilter",
+         "protocol": "UDP",
+         "dst_lo": 49151,
+         "dst_hi": 65535,
+         "action": "DROP"}
+    ]
+}
