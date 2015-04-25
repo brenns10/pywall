@@ -1,10 +1,10 @@
 """Printout rule for PyWall."""
 
 from __future__ import print_function
-from rules import register, Rule
+from rules import register, SimpleRule
 
 
-class PrintRule(Rule):
+class PrintRule(SimpleRule):
 
     def filter_condition(self, pywall_packet):
         """Prints out packet information at the IP level."""

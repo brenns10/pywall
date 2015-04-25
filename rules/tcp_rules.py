@@ -1,10 +1,10 @@
-from rules import register, Rule
+from rules import register, SimpleRule
 from packets import to_tuple
 from pywall import get_pipe
 import socket
 
 
-class TCPRule(Rule):
+class TCPRule(SimpleRule):
 
     def filter_condition(self, pywall_packet):
         return pywall_packet.get_protocol() == socket.IPPROTO_TCP
