@@ -1,8 +1,0 @@
-{
-    "default_chain": "ACCEPT",
-    "INPUT": [
-        {"name": "DestinationIPRule",
-         "cidr_range": "127.0.0.0/24",
-         "action": "DROP"}
-    ]
-}
