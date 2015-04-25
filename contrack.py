@@ -4,7 +4,7 @@
 from __future__ import print_function
 
 import select
-import Queue
+import logging
 
 
 class PyWallConTracker(object):
@@ -31,7 +31,8 @@ class PyWallConTracker(object):
     def handle_ingress(self, report):
         tup, syn, ack, fin = report
         curr = self.connections.get(tup, 'CLOSED')
-        new = curr
+        l = logging.getLogger('pywall.contrack')
+        new = None
         if curr == "CLOSED":
             if syn:
                 new = 'SYN_RCVD1'
@@ -40,62 +41,50 @@ class PyWallConTracker(object):
         elif curr == 'SYN_RCVD2':
             if ack:
                 new = 'ESTABLISHED'
-            else:
-                new = curr
-                print('INVALID: (SYN_RCVD2)')
         elif curr == 'SYN_SENT1':
             if syn and ack:
                 new = 'SYN_SENT2'
             elif syn:
                 new = 'SYN_SENT3'
-            else:
-                print('INVALID: (SYN_SENT1)')
-                new = curr
         elif curr == 'ESTABLISHED':
             if fin:
                 new = 'CLOSE_WAIT1'
             else:
-                new = curr
+                new = 'ESTABLISHED'
         elif curr == 'FIN_WAIT_1':
             if ack:
                 new = 'FIN_WAIT_2'
             elif fin:
                 new = 'CLOSING'
-            else:
-                print('INVALID: (FIN_WAIT_1)')
-                new = curr
         elif curr == 'FIN_WAIT_2':
             if fin:
                 new = 'FIN_WAIT_3'
-            else:
-                print('INVALID: (FIN_WAIT_2)')
-                new = curr
         elif curr == 'CLOSING':
             if ack:
                 new = 'FIN_WAIT_3'
-            else:
-                print('INVALID: (CLOSING)')
         elif curr == 'CLOSING2':
             if ack:
                 new = 'CLOSED'
-            else:
-                print('INVALID: (CLOSING2)')
         elif curr == 'LAST_ACK':
             if ack:
                 new = 'CLOSED'
-            else:
-                print('INVALID: (LAST_ACK)')
-        else:
-            print('INVALID (%s)' % curr)
+
+        if new is None:
             new = curr
+            l.error('RCV: %r (%s): syn=%r, ack=%r, fin=%r => %s'
+                    ' (UNDEFINED TRANSITION)' %
+                    (tup, curr, syn, ack, fin, new))
+        else:
+            l.debug('RCV: %r (%s): syn=%r, ack=%r, fin=%r => %s' %
+                    (tup, curr, syn, ack, fin, new))
+
         self.connections[tup] = new
-        print('RCV: %r (%s): syn=%r, ack=%r, fin=%r => %s' %
-              (tup, curr, syn, ack, fin, new))
 
     def handle_egress(self, report):
         tup, syn, ack, fin = report
         curr = self.connections.get(tup, 'CLOSED')
-        new = curr
+        l = logging.getLogger('pywall.contrack')
+        new = None
         if curr == 'CLOSED':
             if syn:
                 new = 'SYN_SENT1'
@@ -104,62 +93,43 @@ class PyWallConTracker(object):
         elif curr == 'SYN_RCVD1':
             if syn and ack:
                 new = 'SYN_RCVD2'
-            else:
-                print('INVALID: (SYN_RCVD1)')
-                new = curr
         elif curr == 'SYN_RCVD2':
             if fin:
                 new = 'FIN_WAIT_1'
-            else:
-                print('INVALID: (SYN_RCVD2)')
-                new = curr
         elif curr == 'SYN_SENT3':
             if ack:
                 new = 'SYN_RCVD2'
-            else:
-                print('INVALID: (SYN_SENT3)')
-                new = curr
         elif curr == 'SYN_SENT2':
             if ack:
                 new = 'ESTABLISHED'
-            else:
-                print('INVALID: (SYN_SENT2)')
-                new = curr
         elif curr == 'ESTABLISHED':
             if fin:
                 new = 'FIN_WAIT_1'
             else:
-                new = curr
+                new = 'ESTABLISHED'
         elif curr == 'CLOSE_WAIT1':
             if ack:
                 new = 'CLOSE_WAIT2'
-            else:
-                print('INVALID: (CLOSE_WAIT1)')
-                new = curr
         elif curr == 'CLOSE_WAIT2':
             if fin:
                 new = 'LAST_ACK'
-            else:
-                print('INVALID: (CLOSE_WAIT2)')
-                new = curr
         elif curr == 'CLOSING':
             if ack:
                 new = 'CLOSING2'
-            else:
-                print('INVALID: (CLOSING)')
-                new = curr
         elif curr == 'FIN_WAIT_3':
             if ack:
                 new = 'CLOSED'
-            else:
-                print('INVALID: (FIN_WAIT_3)')
-                new = curr
-        else:
-            print('INVALID: (%s)' % curr)
+
+        if new is None:
             new = curr
+            l.error('SND: %r (%s): syn=%r, ack=%r, fin=%r => %s'
+                    ' (UNDEFINED TRANSITION)' %
+                    (tup, curr, syn, ack, fin, new))
+        else:
+            l.debug('SND: %r (%s): syn=%r, ack=%r, fin=%r => %s' %
+                   (tup, curr, syn, ack, fin, new))
+
         self.connections[tup] = new
-        print('SND: %r (%s): syn=%r, ack=%r, fin=%r => %s' %
-              (tup, curr, syn, ack, fin, new))
 
     def handle_query(self, con_tuple):
         self.query_pipe.send(self.connections.get(con_tuple, 'CLOSED'))

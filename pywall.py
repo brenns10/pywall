@@ -5,6 +5,7 @@ from __future__ import print_function
 from packets import IPPacket, TCPPacket, to_tuple
 
 import os
+import logging
 
 import netfilterqueue as nfq
 
@@ -48,10 +49,12 @@ class PyWall(object):
 
     def _apply_chain(self, chain, nfqueue_packet, pywall_packet):
         """Run the packet through a chain."""
+        l = logging.getLogger('pywall.pywall')
         if chain == 'ACCEPT':
             payload = pywall_packet.get_payload()
             # We don't want to tell the connection tracker that we've accepted a
             # TCP connection until we're sure that we have.
+            l.debug('ACCEPT %s' % unicode(pywall_packet))
             if type(payload) is TCPPacket:
                 tup = to_tuple(pywall_packet)
                 if self.tcp_queue is not None:
@@ -60,6 +63,7 @@ class PyWall(object):
                                         bool(payload.flag_fin)))
             nfqueue_packet.accept()
         elif chain == 'DROP':
+            l.info('DROP %s' % unicode(pywall_packet))
             nfqueue_packet.drop()
         else:
             # Match against every rule:
