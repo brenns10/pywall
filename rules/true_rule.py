@@ -1,6 +1,6 @@
-from rules import register, Rule
+from rules import register, SimpleRule
 
-class TrueRule(Rule):
+class TrueRule(SimpleRule):
 
     def filter_condition(self, pckt):
         return True
