@@ -357,7 +357,6 @@ class UDPPacket(TransportLayerPacket):
     def get_body(self):
         return str(self._body)
 
-
     def __unicode__(self):
         """Returns a printable version of the UDP header"""
         return u'UDP from %d to %d' % (self._src_port, self._dst_port)
