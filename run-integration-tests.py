@@ -11,7 +11,7 @@ if __name__ == '__main__':
     if len(sys.argv) > 1:
         modules = sys.argv[1:]
     else:
-        modules = glob.glob(os.path.join(os.path.dirname(__file__), 'test', '*_test.py'))
+        modules = glob.glob(os.path.join(os.path.dirname(__file__), 'test/integration', '*_test.py'))
         print(modules)
     test_results = []
     for module in modules:
