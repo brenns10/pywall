@@ -17,7 +17,7 @@ class SourceIPRule(IPRangeRule):
         """
         Filter packets if their source address falls within the ip_range.
         """
-        return pywall_packet._src_ip in self._ip_range
+        return pywall_packet.get_src_ip() in self._ip_range
 
 class DestinationIPRule(IPRangeRule):
     """Filter IP packets based on destination address"""
@@ -27,7 +27,7 @@ class DestinationIPRule(IPRangeRule):
     def filter_condition(self, pywall_packet):
         """
         Filter packets if their destination address falls within the ip_range."""
-        return pywall_packet._dst_ip in self._ip_range
+        return pywall_packet.get_dst_ip() in self._ip_range
 
 register(SourceIPRule)
 register(DestinationIPRule)
