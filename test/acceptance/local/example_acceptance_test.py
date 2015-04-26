@@ -44,7 +44,7 @@ class ExampleAcceptanceTest(PyWallAcceptanceTestCase):
 
 tests = [
     ('ExampleAcceptanceTest', ExampleAcceptanceTest('example_config.json',
-                                                    '@'.join([CONF['user'], CONF['host']]),
+                                                    '@'.join([CONF['user'], CONF['remote_host']]),
                                                     key_file=CONF['key_file'],
-                                                    remote_args=[CONF['host']])),
+                                                    remote_args=[CONF['target_host']])),
 ]
