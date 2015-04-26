@@ -39,7 +39,7 @@ class ExampleAcceptanceTest(PyWallAcceptanceTestCase):
     def __init__(self, config, host, key_file=None, remote_args=[]):
         PyWallAcceptanceTestCase.__init__(self, config, host, 'example_test',
                                           remote_args=remote_args,
-                                          listener=ExampleListener(CONF['host']), key_file=key_file)
+                                          listener=ExampleListener(CONF['remote_host']), key_file=key_file)
 
 
 tests = [
