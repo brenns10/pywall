@@ -5,23 +5,24 @@ import socket
 
 
 class ExampleListener(BaseListener):
-    def __init__(self, host):
-        self._port = 9001
+    def __init__(self, host, port=9001):
+        self._port = port
         self._timeout = 5
         self._host = host
         self._host_ip = socket.gethostbyname(host)
 
-    def listen(self, queue):
+    def listen(self, queue, sem):
         print('listening')
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        sock.bind(('localhost', self._port))
+        sock.bind(('0.0.0.0', self._port))
         sock.listen(5)
         sock.settimeout(self._timeout)
+        sem.release()
         try:
             print('before loop')
             while True:
-                s = sock.accept()
-                if s.getpeername() == self._host_ip:
+                s, (host_ip, host_port) = sock.accept()
+                if host_ip == self._host_ip:
                     res = s.recv(1024)
                     print(res)
                     queue.put(res == 'knock-knock')
@@ -39,12 +40,14 @@ class ExampleAcceptanceTest(PyWallAcceptanceTestCase):
     def __init__(self, config, host, key_file=None, remote_args=[]):
         PyWallAcceptanceTestCase.__init__(self, config, host, 'example_test',
                                           remote_args=remote_args,
-                                          listener=ExampleListener(CONF['remote_host']), key_file=key_file)
+                                          listener=ExampleListener(CONF['remote_host'],
+                                                                   port=CONF['port'],
+                                                                   key_file=key_file))
 
 
 tests = [
     ('ExampleAcceptanceTest', ExampleAcceptanceTest('example_config.json',
                                                     '@'.join([CONF['user'], CONF['remote_host']]),
                                                     key_file=CONF['key_file'],
-                                                    remote_args=[CONF['target_host']])),
+                                                    remote_args=[CONF['target_host'], CONF['port']])),
 ]
