@@ -22,7 +22,9 @@ class ExampleListener(BaseListener):
             while True:
                 s = sock.accept()
                 if s.getpeername() == self._host_ip:
-                    queue.put(True)
+                    res = s.recv(1024)
+                    print(res)
+                    queue.put(res == 'knock-knock')
                     s.close()
                     break
                 s.close()
