@@ -12,6 +12,7 @@ if __name__ == '__main__':
     print(target)
     timeout = int(sys.argv[2]) if len(sys.argv) >= 4 else 5
 
+    time.sleep(2)
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.settimeout(timeout)
     try:
