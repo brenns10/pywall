@@ -1,7 +1,6 @@
 {
     "default_chain": "ACCEPT",
     "INPUT": [
-        {"name": "PrintRule"},
         {"name": "PortFilter",
          "protocol": "TCP",
          "src_port": 22,
@@ -10,5 +9,6 @@
          "protocol": "TCP",
          "dst_port": 22,
          "action": "ACCEPT"}
+        {"name": "PrintRule"},
     ]
 }
