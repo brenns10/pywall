@@ -49,5 +49,5 @@ tests = [
     ('ExampleAcceptanceTest', ExampleAcceptanceTest('example_config.json',
                                                     '@'.join([CONF['user'], CONF['remote_host']]),
                                                     key_file=CONF['key_file'],
-                                                    remote_args=[CONF['target_host'], CONF['port']])),
+                                                    remote_args=[CONF['target_host'], str(CONF['port'])])),
 ]
