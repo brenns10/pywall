@@ -8,7 +8,7 @@
         {"name": "PortFilter",
          "protocol": "TCP",
          "dst_port": 22,
-         "action": "ACCEPT"}
-        {"name": "PrintRule"},
+         "action": "ACCEPT"},
+        {"name": "PrintRule"}
     ]
 }
