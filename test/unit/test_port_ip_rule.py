@@ -19,7 +19,7 @@ class TestAddressPortRule(unittest.TestCase):
     def test_port_and_src_rule_both_match(self):
         rule = AddressPortRule(protocol='UDP', src_lo=0, src_hi=1, src_ip='127.0.0.0/24')
         packet = FakePacket(protocol=socket.IPPROTO_UDP, src_port=0, src_ip='127.0.0.0')
-        self.assertFalse(rule.filter_condition(packet))
+        self.assertTrue(rule.filter_condition(packet))
 
     def test_port_and_src_rule_port_fails(self):
         rule = AddressPortRule(protocol='UDP', src_lo=0, src_hi=1, src_ip='127.0.0.0/24')
@@ -39,7 +39,7 @@ class TestAddressPortRule(unittest.TestCase):
     def test_port_and_dst_rule_both_match(self):
         rule = AddressPortRule(protocol='UDP', src_lo=0, src_hi=1, dst_ip='127.0.0.0/24')
         packet = FakePacket(protocol=socket.IPPROTO_UDP, src_port=0, dst_ip='127.0.0.0')
-        self.assertFalse(rule.filter_condition(packet))
+        self.assertTrue(rule.filter_condition(packet))
 
     def test_port_and_dst_rule_port_fails(self):
         rule = AddressPortRule(protocol='UDP', src_lo=0, src_hi=1, dst_ip='127.0.0.0/24')
