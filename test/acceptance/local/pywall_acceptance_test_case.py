@@ -68,8 +68,9 @@ class PyWallAcceptanceTestCase(object):
         # set up listener
         print('set up listener')
         res_queue = mp.Queue()
-        listener = mp.Process(target=self._listener.listen, args=(res_queue,))
+        listener = mp.Process(target=self._listener.listen, args=(res_queue, sem))
         listener.start()
+        sem.acquire()  # by here, listener is ready
 
         # call out to host
         print('call out to host')
@@ -83,7 +84,7 @@ class PyWallAcceptanceTestCase(object):
         print('merge in listener')
         listener.join()
         try:
-            passed = res_queue.get(timeout=5)
+            passed = res_queue.get(timeout=1)
         except Queue.Empty as e:
             print(e)
             passed = True
@@ -109,5 +110,5 @@ class BaseListener(object):
     __metaclass__ = ABCMeta
 
     @abstractmethod
-    def listen(self, queue):
+    def listen(self, queue, sem):
         pass
