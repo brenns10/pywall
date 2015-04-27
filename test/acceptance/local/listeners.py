@@ -34,6 +34,7 @@ class TCPListener(BaseListener):
         print('listening')
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         try:
+            sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
             sock.bind(('0.0.0.0', self._port))
             sock.listen(5)
             sock.settimeout(self._timeout)
@@ -71,6 +72,7 @@ class UDPListener(BaseListener):
     def listen(self, queue, sem):
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         try:
+            sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
             sock.bind(('0.0.0.0', self._port))
             sock.listen(5)
             sock.settimeout(self._timeout)
