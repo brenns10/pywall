@@ -1,7 +1,7 @@
 {
     "INPUT":[
         {"name":"PrintRule"},
-        {"name":"PortFilter", "protocol":"UDP", "src_port":53, "action":"DROP"},
+        {"name":"PortRule", "protocol":"UDP", "src_port":53, "action":"DROP"},
         {"name":"PortRangeFilter", "protocol":"TCP", "src_lo":49152, "src_hi":65535, "action":"DROP"}
     ]
 }

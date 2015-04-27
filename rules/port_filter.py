@@ -3,7 +3,7 @@ from rules import SimpleRule
 
 import socket
 
-class PortFilter(SimpleRule):
+class PortRule(SimpleRule):
     """Class for filtering out packets to/from a single port"""
     def __init__(self, **kwargs):  #protocol, match_callback, src_port=None, dst_port=None):
         protocol = kwargs.get('protocol', None)
@@ -26,7 +26,7 @@ class PortFilter(SimpleRule):
         match = match and (self._src_port == None or packet.get_payload().get_src_port() == self._src_port)
         match = match and (self._dst_port == None or packet.get_payload().get_dst_port() == self._dst_port)
         if match:
-            print('PortFilter: %s' % str(self._action))
+            print('PortRule: %s' % str(self._action))
         return match
 
 
@@ -74,5 +74,5 @@ class PortRangeFilter(SimpleRule):
         return match
 
 
-register(PortFilter)
+register(PortRule)
 register(PortRangeFilter)

@@ -2,11 +2,11 @@
     "default_chain": "ACCEPT",
     "INPUT": [
         {"name": "PrintRule"},
-        {"name": "PortFilter",
+        {"name": "PortRule",
          "protocol": "TCP",
          "dst_port": 80,
          "action": "DROP"},
-        {"name": "PortFilter",
+        {"name": "PortRule",
          "protocol": "UDP",
          "dst_port": 53,
          "action": "DROP"}

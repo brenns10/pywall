@@ -4,95 +4,95 @@ from rules import port_filter
 from test.unit.fake_packet import FakePacket
 
 
-class TestPortFilter(unittest.TestCase):
+class TestPortRule(unittest.TestCase):
 
     def test_udp_filter_with_tcp_packet(self):
-        rule = port_filter.PortFilter(protocol='UDP', src_port=0)
+        rule = port_filter.PortRule(protocol='UDP', src_port=0)
         packet = FakePacket(protocol=socket.IPPROTO_TCP)
         self.assertFalse(rule.filter_condition(packet))
 
     def test_udp_filter_with_udp_matching_src_port(self):
-        rule = port_filter.PortFilter(protocol='UDP', src_port=0)
+        rule = port_filter.PortRule(protocol='UDP', src_port=0)
         packet = FakePacket(protocol=socket.IPPROTO_UDP, src_port=0)
         self.assertTrue(rule.filter_condition(packet))
 
     def test_upd_filter_udp_packet_wrong_src_port(self):
-        rule = port_filter.PortFilter(protocol='UDP', src_port=0)
+        rule = port_filter.PortRule(protocol='UDP', src_port=0)
         packet = FakePacket(protocol=socket.IPPROTO_UDP, src_port=1)
         self.assertFalse(rule.filter_condition(packet))
 
     def test_udp_filter_udp_packet_matching_dst_port(self):
-        rule = port_filter.PortFilter(protocol='UDP', dst_port=0)
+        rule = port_filter.PortRule(protocol='UDP', dst_port=0)
         packet = FakePacket(protocol=socket.IPPROTO_UDP, dst_port=0)
         self.assertTrue(rule.filter_condition(packet))
 
     def test_udp_filter_udp_packet_wrong_dst_port(self):
-        rule = port_filter.PortFilter(protocol='UDP', dst_port=0)
+        rule = port_filter.PortRule(protocol='UDP', dst_port=0)
         packet = FakePacket(protocol=socket.IPPROTO_UDP, dst_port=1)
         self.assertFalse(rule.filter_condition(packet))
 
     def test_udp_filter_udp_packet_matching_src_and_dst(self):
-        rule = port_filter.PortFilter(protocol='UDP', src_port=0, dst_port=0)
+        rule = port_filter.PortRule(protocol='UDP', src_port=0, dst_port=0)
         packet = FakePacket(protocol=socket.IPPROTO_UDP, src_port=0, dst_port=0)
         self.assertTrue(rule.filter_condition(packet))
 
     def test_udp_filter_udp_packet_right_src_wrong_dst(self):
-        rule = port_filter.PortFilter(protocol='UDP', src_port=0, dst_port=0)
+        rule = port_filter.PortRule(protocol='UDP', src_port=0, dst_port=0)
         packet = FakePacket(protocol=socket.IPPROTO_UDP, src_port=0, dst_port=1)
         self.assertFalse(rule.filter_condition(packet))
 
     def test_udp_filter_udp_packet_wrong_src_right_dst(self):
-        rule = port_filter.PortFilter(protocol='UDP', src_port=0, dst_port=0)
+        rule = port_filter.PortRule(protocol='UDP', src_port=0, dst_port=0)
         packet = FakePacket(protocol=socket.IPPROTO_UDP, src_port=1, dst_port=1)
         self.assertFalse(rule.filter_condition(packet))
 
     def test_udp_filter_udp_packet_wrong_src_wrong_dst(self):
-        rule = port_filter.PortFilter(protocol='UDP', src_port=0, dst_port=0)
+        rule = port_filter.PortRule(protocol='UDP', src_port=0, dst_port=0)
         packet = FakePacket(protocol=socket.IPPROTO_UDP, src_port=1, dst_port=1)
         self.assertFalse(rule.filter_condition(packet))
 
     def test_tcp_filter_udp_packet(self):
-        rule = port_filter.PortFilter(protocol='TCP', src_port=0)
+        rule = port_filter.PortRule(protocol='TCP', src_port=0)
         packet = FakePacket(protocol=socket.IPPROTO_UDP)
         self.assertFalse(rule.filter_condition(packet))
 
     def test_tcp_filter_tcp_packet_matching_src_port(self):
-        rule = port_filter.PortFilter(protocol='TCP', src_port=0)
+        rule = port_filter.PortRule(protocol='TCP', src_port=0)
         packet = FakePacket(protocol=socket.IPPROTO_TCP, src_port=0)
         self.assertTrue(rule.filter_condition(packet))
 
     def test_tcd_filter_tcp_packet_wrong_src_port(self):
-        rule = port_filter.PortFilter(protocol='TCP', src_port=0)
+        rule = port_filter.PortRule(protocol='TCP', src_port=0)
         packet = FakePacket(protocol=socket.IPPROTO_TCP, src_port=1)
         self.assertFalse(rule.filter_condition(packet))
 
     def test_tcp_filter_tcp_packet_matching_dst_port(self):
-        rule = port_filter.PortFilter(protocol='TCP', dst_port=0)
+        rule = port_filter.PortRule(protocol='TCP', dst_port=0)
         packet = FakePacket(protocol=socket.IPPROTO_TCP, dst_port=0)
         self.assertTrue(rule.filter_condition(packet))
 
     def test_tcp_filter_tcp_packet_wrong_dst_port(self):
-        rule = port_filter.PortFilter(protocol='TCP', dst_port=0)
+        rule = port_filter.PortRule(protocol='TCP', dst_port=0)
         packet = FakePacket(protocol=socket.IPPROTO_TCP, dst_port=1)
         self.assertFalse(rule.filter_condition(packet))
 
     def test_tcp_filter_tcp_packet_matching_src_and_dst(self):
-        rule = port_filter.PortFilter(protocol='TCP', src_port=0, dst_port=0)
+        rule = port_filter.PortRule(protocol='TCP', src_port=0, dst_port=0)
         packet = FakePacket(protocol=socket.IPPROTO_TCP, src_port=0, dst_port=0)
         self.assertTrue(rule.filter_condition(packet))
 
     def test_tcp_filter_tcp_packet_right_src_wrong_dst(self):
-        rule = port_filter.PortFilter(protocol='TCP', src_port=0, dst_port=0)
+        rule = port_filter.PortRule(protocol='TCP', src_port=0, dst_port=0)
         packet = FakePacket(protocol=socket.IPPROTO_TCP, src_port=0, dst_port=1)
         self.assertFalse(rule.filter_condition(packet))
 
     def test_tcp_filter_tcp_packet_wrong_src_right_dst(self):
-        rule = port_filter.PortFilter(protocol='TCP', src_port=0, dst_port=0)
+        rule = port_filter.PortRule(protocol='TCP', src_port=0, dst_port=0)
         packet = FakePacket(protocol=socket.IPPROTO_TCP, src_port=1, dst_port=1)
         self.assertFalse(rule.filter_condition(packet))
 
     def test_tcp_filter_tcp_packet_wrong_src_wrong_dst(self):
-        rule = port_filter.PortFilter(protocol='TCP', src_port=0, dst_port=0)
+        rule = port_filter.PortRule(protocol='TCP', src_port=0, dst_port=0)
         packet = FakePacket(protocol=socket.IPPROTO_TCP, src_port=1, dst_port=1)
         self.assertFalse(rule.filter_condition(packet))
 
