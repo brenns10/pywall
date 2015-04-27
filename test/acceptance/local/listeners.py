@@ -64,15 +64,19 @@ class UDPListener(BaseListener):
         self._timeout = 5
 
     def listen(self, queue, sem):
-        print('listening')
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        sock.bind(('0.0.0.0', self._port))
-        sock.listen(5)
-        sock.settimeout(self._timeout)
-        sem.release()
+        try:
+            sock.bind(('0.0.0.0', self._port))
+            sock.listen(5)
+            sock.settimeout(self._timeout)
+        except:
+            print('failed to set up listener socket')
+            sem.release()
+        finally:
+            sem.release()
 
         start = datetime.now()
-        print('before loop')
+        print('listening...')
         try:
             while start + timedelta(seconds=self._timeout) < datetime.now():
                 s = sock.recv(1024)
