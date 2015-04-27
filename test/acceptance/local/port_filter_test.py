@@ -6,8 +6,8 @@ import socket
 
 
 class TestBlockTCP(PyWallAcceptanceTestCase):
-    def __init__(self, config, key_file=None, remote_module='', remote_args=[]):
-        listener = TCPListener(CONF['remote_host'], CONF['port'])
+    def __init__(self, config, port=9001, key_file=None, remote_module='', remote_args=[]):
+        listener = TCPListener(CONF['remote_host'], port)
         PyWallAcceptanceTestCase.__init__(self, config, '@'.join([CONF['user'], CONF['remote_host']]),
                                           remote_module=remote_module,
                                           remote_args=remote_args,
@@ -19,8 +19,8 @@ class TestBlockTCP(PyWallAcceptanceTestCase):
 
 
 class TestBlockUDP(PyWallAcceptanceTestCase):
-    def __init__(self, config, key_file=None, remote_module='', remote_args=[]):
-        listener = UDPListener(CONF['port'])
+    def __init__(self, config, port=9001, key_file=None, remote_module='', remote_args=[]):
+        listener = UDPListener(port)
         PyWallAcceptanceTestCase.__init__(self, config, '@'.join([CONF['user'], CONF['remote_host']]),
                                           remote_module=remote_module,
                                           remote_args=remote_args,
@@ -33,10 +33,10 @@ class TestBlockUDP(PyWallAcceptanceTestCase):
 
 tests = [
     # Tests dst_port filtering
-    ('TCPUnregDstPort1', TestBlockTCP('block_unreg_dst_ports.json',
+    ('TCPUnregDstPort1', TestBlockTCP('block_unreg_dst_ports.json', 49152,
                                       remote_module='example_test_remote.py',
                                       remote_args=[CONF['target_host'], str(49152)])),
-    ('UDPUnregDstPort1', TestBlockUDP('block_unreg_dst_ports.json',
+    ('UDPUnregDstPort1', TestBlockUDP('block_unreg_dst_ports.json', 49152,
                                       remote_module='example_test_remote.py',
                                       remote_args=[CONF['target_host'], str(49152), 'UDP'])),
 ]

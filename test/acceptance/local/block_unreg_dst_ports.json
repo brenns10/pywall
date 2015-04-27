@@ -1,6 +1,14 @@
 {
     "default_chain": "ACCEPT",
     "INPUT": [
+        {"name": "PortFilter",
+         "protocol": "TCP",
+         "src_port": 22,
+         "action": "ACCEPT"},
+        {"name": "PortFilter",
+         "protocol": "TCP",
+         "dst_port": 22,
+         "action": "ACCEPT"},
         {"name": "PortRangeFilter",
          "protocol": "TCP",
          "dst_lo": 49151,
