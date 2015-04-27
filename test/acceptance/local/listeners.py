@@ -55,7 +55,7 @@ class TCPListener(BaseListener):
                     s.close()
                     break
                 s.close()
-        except socket.timeout:
+        except:
             queue.put(False)
         sock.close()
         print('done listening')
