@@ -72,7 +72,6 @@ class UDPListener(BaseListener):
         try:
             sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
             sock.bind(('0.0.0.0', self._port))
-            sock.listen(5)
             sock.settimeout(self._timeout)
         except Exception as e:
             print(e)
