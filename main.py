@@ -36,7 +36,7 @@ def main(conf, loglevel, filename, **kwargs):
     kwargs['logqueue'] = log_queue
     initialize_logging(loglevel, log_queue)
 
-    ct = contrack.PyWallConTracker(ingress_queue, egress_queue, query_contrack)
+    ct = contrack.PyWallCracker(ingress_queue, egress_queue, query_contrack)
 
     log_process = mp.Process(target=log_server, args=(loglevel, log_queue,
                                                       filename))

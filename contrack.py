@@ -7,7 +7,7 @@ import select
 import logging
 
 
-class PyWallConTracker(object):
+class PyWallCracker(object):
     """Central TCP connection tracking process and class.
 
     Receives TCP packets from ingress and egress, and updates connection status
