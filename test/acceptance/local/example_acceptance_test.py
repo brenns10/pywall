@@ -21,6 +21,6 @@ tests = [
     ('ExampleAcceptanceTest', ExampleAcceptanceTest('example_config.json',
                                                     '@'.join([CONF['user'], CONF['remote_host']]),
                                                     key_file=CONF['key_file'],
-                                                    remote_module='example_acceptance_test_remote.py',
+                                                    remote_module='example_test_remote.py',
                                                     remote_args=[CONF['target_host'], str(CONF['port'])])),
 ]
