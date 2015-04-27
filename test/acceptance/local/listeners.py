@@ -39,8 +39,7 @@ class TCPListener(BaseListener):
             sock.listen(5)
             sock.settimeout(self._timeout)
         except:
-            print('failed to set up listener socket')
-            sem.release()
+            print('failed to set up TCP listener socket')
         finally:
             sem.release()
 
@@ -63,10 +62,9 @@ class TCPListener(BaseListener):
 
 
 class UDPListener(BaseListener):
-    def __init__(self, host, port, msg='knock-knock', timeout=5):
+    def __init__(self, port, msg='knock-knock', timeout=5):
         BaseListener.__init__(self, msg=msg)
         self._port = port
-        self._remote_host_ip = socket.gethostbyname(host)
         self._timeout = 5
 
     def listen(self, queue, sem):
@@ -77,8 +75,7 @@ class UDPListener(BaseListener):
             sock.listen(5)
             sock.settimeout(self._timeout)
         except:
-            print('failed to set up listener socket')
-            sem.release()
+            print('failed to set up UDP listener socket')
         finally:
             sem.release()
 
@@ -86,17 +83,11 @@ class UDPListener(BaseListener):
         print('listening...')
         try:
             while start + timedelta(seconds=self._timeout) < datetime.now():
-                s = sock.recv(1024)
-                s, (host_ip, host_port) = sock.accept()
-                if host_ip == self._remote_host_ip:
-                    msg = s.recv(1024)
-                    print(msg)
-                    queue.put(msg == self._msg)
-                    s.close()
+                msg = sock.recv(1024)
+                if (msg == 'self._msg'):
+                    queue.put(True)
                     break
-                s.close()
-            sock.close()
-        except socket.timeout:
-            sock.close()
+        except:
             queue.put(False)
+        sock.close()
         print('done listening')
