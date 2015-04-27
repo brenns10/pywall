@@ -36,18 +36,19 @@ def Popen_wait(proc, timeout, interval=1):
 class PyWallAcceptanceTestCase(object):
     __metaclass__ = ABCMeta
 
-    def __init__(self, config, host, test_name, remote_args=[], listener=None, key_file=None, timeout=3):
+    def __init__(self, config, host, remote_module='', 
+                 remote_args=[], listener=None, key_file=None, timeout=3):
         self._config = pjoin('test/acceptance/local', config)
         self._host = host
-        self._test_name = test_name
         self._timeout = timeout
         self._key_file = key_file
         self._listener = listener
         self._remote_args = remote_args
+        self._remote_module = remote_module
 
     def run_test_on_host(self, *args):
         cmd = ' '.join(['/usr/bin/env python2',
-                       pjoin('pywall/test/acceptance/remote', self._test_name + '_remote.py')
+                        pjoin('pywall/test/acceptance/remote', self._remote_module)
                     ] + list(args))
         ssh_args = ['ssh', self._host,
                 '-i', self._key_file,
@@ -102,13 +103,3 @@ class PyWallAcceptanceTestCase(object):
         return passed
 
 
-class BaseListener(object):
-    """
-    Base class for listeners. Extend and implement listen() to suit
-    your acceptance test.
-    """
-    __metaclass__ = ABCMeta
-
-    @abstractmethod
-    def listen(self, queue, sem):
-        pass
