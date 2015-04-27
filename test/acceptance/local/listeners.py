@@ -1,5 +1,6 @@
 from datetime import datetime
 from datetime import timedelta
+from abc import ABCMeta
 
 
 class BaseListener(object):
@@ -70,6 +71,7 @@ class UDPListener(BaseListener):
         print('before loop')
         try:
             while start + timedelta(seconds=self._timeout) < datetime.now():
+                s = sock.recv(1024)
                 s, (host_ip, host_port) = sock.accept()
                 if host_ip == self._remote_host_ip:
                     msg = s.recv(1024)
