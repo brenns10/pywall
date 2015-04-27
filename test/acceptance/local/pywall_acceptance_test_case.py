@@ -81,7 +81,7 @@ class PyWallAcceptanceTestCase(object):
         
         # merge in listener
         print('merge in listener')
-        listener.join()
+        listener.join(3)
         try:
             passed = res_queue.get(timeout=1)
         except Queue.Empty as e:
@@ -95,7 +95,7 @@ class PyWallAcceptanceTestCase(object):
         # kill pywall
         print('kill pywall')
         os.kill(pywall.pid, signal.SIGINT)
-        pywall.join()
+        pywall.join(3)
 
         print('returning')
         return passed
