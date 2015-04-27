@@ -4,7 +4,7 @@ import socket
 import select
 
 
-class SourceIPRuleTest(PyWallTestCase):
+class DestinationIPRuleTest(PyWallTestCase):
     def __init__(self, config_filename, port, client_timeout=1, server_timeout=5, expected_num_connections=1):
         self.port = port
         self.timeout = client_timeout
@@ -22,7 +22,7 @@ class SourceIPRuleTest(PyWallTestCase):
 
 
 tests = [
-    ('SourceIPRuleOutOfRangeTest', SourceIPRuleTest('test/source_ip_rule_out_of_range.json', 58008, client_timeout=1, server_timeout=5)),
-    ('SourceIPRuleInRangeAcceptTest', SourceIPRuleTest('test/source_ip_rule_in_range_accept.json', 58008, client_timeout=1, server_timeout=5)),
-    ('SourceIPRuleInRangeDropTest', SourceIPRuleTest('test/source_ip_rule_in_range_drop.json', 58008, client_timeout=1, server_timeout=5, expected_num_connections=0)),
+    ('DestinationIPRuleOutOfRangeTest', DestinationIPRuleTest('test/integration/destination_ip_rule_out_of_range.json', 58008, client_timeout=1, server_timeout=5)),
+    ('DestinationIPRuleInRangeAcceptTest', DestinationIPRuleTest('test/integration/destination_ip_rule_in_range_accept.json', 58008, client_timeout=1, server_timeout=5)),
+    ('DestinationIPRuleInRangeDropTest', DestinationIPRuleTest('test/integration/destination_ip_rule_in_range_drop.json', 58008, client_timeout=1, server_timeout=5, expected_num_connections=0)),
 ]

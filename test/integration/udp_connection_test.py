@@ -19,5 +19,5 @@ class UDPConnectionTest(PyWallTestCase):
 
 
 tests = [
-    ('UDPConnectionTest', UDPConnectionTest('test/tcp_connection.json', 58008, client_timeout=1, server_timeout=5)),
+    ('UDPConnectionTest', UDPConnectionTest('test/integration/tcp_connection.json', 58008, client_timeout=1, server_timeout=5)),
 ]

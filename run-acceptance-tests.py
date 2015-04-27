@@ -9,9 +9,12 @@ import glob
 
 if __name__ == '__main__':
     if len(sys.argv) > 1:
-        modules = sys.argv[1:]
+        if sys.argv[1] == 'test_connection':
+            modules = ['./test/acceptance/local/test_connection.py']
+        else:
+            modules = sys.argv[1:]
     else:
-        modules = glob.glob(os.path.join(os.path.dirname(__file__), 'test', '*_test.py'))
+        modules = glob.glob(os.path.join(os.path.dirname(__file__), 'test/acceptance/local', '*_test.py'))
         print(modules)
     test_results = []
     for module in modules:
@@ -26,6 +29,7 @@ if __name__ == '__main__':
             try:
                 result = test_class.run()
             except Exception as e:
+                print('Exception in test case: %s' % test_name) 
                 print(e)
                 result = False
 
