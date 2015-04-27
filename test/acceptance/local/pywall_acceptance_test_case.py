@@ -27,9 +27,7 @@ def Popen_wait(proc, timeout, interval=1):
     try:
         proc.kill()
     except Exception as e:
-        print('In Popen_wait: may not be an actual error')
-        print(type(e))
-        print(str(e))
+        pass # not actually an error
 
 
 
