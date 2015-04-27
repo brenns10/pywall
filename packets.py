@@ -380,6 +380,9 @@ class ICMPPacket(TransportLayerPacket):
     def get_data_len(self):
         return 4
 
+    def get_body(self):
+        return self.rest
+
     def __unicode__(self):
         return u'ICMP Type %d (%s) Code %d (%s)' % \
             (self.type, ICMP_TYPES.get(self.type, 'Unknown'),
