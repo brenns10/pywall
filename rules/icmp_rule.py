@@ -1,10 +1,10 @@
 """Rule matching ICMP packets."""
 
-from rules import Rule, register
+from rules import SimpleRule, register
 from packets import ICMPPacket
 
 
-class ICMPRule(Rule):
+class ICMPRule(SimpleRule):
 
     def filter_condition(self, pckt):
         return type(pckt.get_payload()) is ICMPPacket
