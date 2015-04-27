@@ -50,10 +50,9 @@ class TCPListener(BaseListener):
                     s.close()
                     break
                 s.close()
-            sock.close()
         except socket.timeout:
-            sock.close()
             queue.put(False)
+        sock.close()
         print('done listening')
 
 
