@@ -41,7 +41,7 @@ class TCPListener(BaseListener):
         start = datetime.now()
         print('before loop')
         try:
-            while start + timedelta(seconds=self._timeout) < datetime.now():
+            while datetime.now() < start + timedelta(seconds=self._timeout):
                 s, (host_ip, host_port) = sock.accept()
                 if host_ip == self._remote_host_ip:
                     msg = s.recv(1024)
