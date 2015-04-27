@@ -27,6 +27,6 @@ class PyWallConfig(object):
                 name = rule.pop('name', None)
                 rule_class = rules.rules[name]
                 rule_instance = rule_class(**rule)
-                the_wall.add_rule(chain, rule_instance)
+                the_wall.add_brick(chain, rule_instance)
 
         return the_wall

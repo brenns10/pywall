@@ -43,7 +43,7 @@ class PyWall(object):
         """Add a new, empty chain."""
         self.chains[chain_name] = []
 
-    def add_rule(self, chain, rule):
+    def add_brick(self, chain, rule):
         """Add a rule to a chain."""
         self.chains[chain].append(rule)
 
