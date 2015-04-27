@@ -1,11 +1,11 @@
-from rules import register, Rule
+from rules import register, SimpleRule
 import netaddr
 
 
-class IPRangeRule(Rule):
+class IPRangeRule(SimpleRule):
     """Filter IP packets based on source/dest address."""
     def __init__(self, **kwargs):
-        Rule.__init__(self, **kwargs)
+        SimpleRule.__init__(self, **kwargs)
         self._ip_range = netaddr.IPNetwork(kwargs['cidr_range'])
 
 class SourceIPRule(IPRangeRule):

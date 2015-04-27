@@ -1,12 +1,12 @@
-from rules import register, Rule
+from rules import register, SimpleRule
 from rules.port_filter import PortRangeFilter
 from rules.ip_rules import SourceIPRule, DestinationIPRule
 
 
-class AddressPortRule (Rule):
+class AddressPortRule(SimpleRule):
 
     def __init__(self, **kwargs):
-        Rule.__init__(self, **kwargs)
+        SimpleRule.__init__(self, **kwargs)
         self.port_rule = PortRangeFilter(**kwargs)
 
         source_args = kwargs.copy()

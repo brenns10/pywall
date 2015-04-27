@@ -52,7 +52,9 @@ class PyWallConTracker(object):
             else:
                 new = 'ESTABLISHED'
         elif curr == 'FIN_WAIT_1':
-            if ack:
+            if fin and ack:
+                new = 'FIN_WAIT_3'
+            elif ack:
                 new = 'FIN_WAIT_2'
             elif fin:
                 new = 'CLOSING'
@@ -90,6 +92,9 @@ class PyWallConTracker(object):
                 new = 'SYN_SENT1'
             else:  # Assume this was running before hand.
                 new = 'ESTABLISHED'
+        elif curr == 'SYN_SENT1':
+            if syn:
+                new = 'SYN_SENT1'  # This means we are retrying a connection.
         elif curr == 'SYN_RCVD1':
             if syn and ack:
                 new = 'SYN_RCVD2'
@@ -108,7 +113,9 @@ class PyWallConTracker(object):
             else:
                 new = 'ESTABLISHED'
         elif curr == 'CLOSE_WAIT1':
-            if ack:
+            if fin and ack:
+                new = 'LAST_ACK'
+            elif ack:
                 new = 'CLOSE_WAIT2'
         elif curr == 'CLOSE_WAIT2':
             if fin:
