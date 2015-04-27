@@ -43,7 +43,7 @@ class PyWall(object):
         """Add a new, empty chain."""
         self.chains[chain_name] = []
 
-    def add_rule(self, chain, rule):
+    def add_brick(self, chain, rule):
         """Add a rule to a chain."""
         self.chains[chain].append(rule)
 
@@ -82,7 +82,7 @@ class PyWall(object):
         pywall_packet = IPPacket(packet.get_payload())
         self._apply_chain(self._start, packet, pywall_packet)
 
-    def run(self, **kwargs):
+    def erect(self, **kwargs):
         """Run the PyWall!"""
         # Setup firewall rule.
         setup = _NFQ_INIT % self.queue_num

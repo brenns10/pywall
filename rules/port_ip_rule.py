@@ -1,13 +1,13 @@
 from rules import register, SimpleRule
-from rules.port_filter import PortRangeFilter
+from rules.port_filter import PortRangeRule
 from rules.ip_rules import SourceIPRule, DestinationIPRule
 
 
-class AddressPortRule(SimpleRule):
+class IPPortRule(SimpleRule):
 
     def __init__(self, **kwargs):
         SimpleRule.__init__(self, **kwargs)
-        self.port_rule = PortRangeFilter(**kwargs)
+        self.port_rule = PortRangeRule(**kwargs)
 
         source_args = kwargs.copy()
         source_ip = source_args.pop('src_ip', None)
@@ -33,4 +33,4 @@ class AddressPortRule(SimpleRule):
             res = res and self.ip_dst_rule.filter_condition(packet)
         return res
 
-register(AddressPortRule)
+register(IPPortRule)

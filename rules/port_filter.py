@@ -3,7 +3,7 @@ from rules import SimpleRule
 
 import socket
 
-class PortFilter(SimpleRule):
+class PortRule(SimpleRule):
     """Class for filtering out packets to/from a single port"""
     def __init__(self, **kwargs):  #protocol, match_callback, src_port=None, dst_port=None):
         protocol = kwargs.get('protocol', None)
@@ -26,11 +26,11 @@ class PortFilter(SimpleRule):
         match = match and (self._src_port == None or packet.get_payload().get_src_port() == self._src_port)
         match = match and (self._dst_port == None or packet.get_payload().get_dst_port() == self._dst_port)
         if match:
-            print('PortFilter: %s' % str(self._action))
+            print('PortRule: %s' % str(self._action))
         return match
 
 
-class PortRangeFilter(SimpleRule):
+class PortRangeRule(SimpleRule):
     """Blocks all packets with given protocol on inclusive range [lo, hi]."""
     def __init__(self, **kwargs):  #protocol, match_callback, src_range=(None,None), dst_range=(None,None)):
         protocol = kwargs.get('protocol', None)
@@ -70,9 +70,9 @@ class PortRangeFilter(SimpleRule):
         match = match and ((self._dst_range == (None, None)) or
                            (self._dst_lo <= dst_port <= self._dst_hi))
         if match:
-            print('PortRangeFilter: %s' % str(self._action))
+            print('PortRangeRule: %s' % str(self._action))
         return match
 
 
-register(PortFilter)
-register(PortRangeFilter)
+register(PortRule)
+register(PortRangeRule)

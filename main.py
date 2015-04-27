@@ -18,7 +18,7 @@ def run_pywall(conf, packet_queue, query_pipe, kwargs):
     initialize_logging(loglevel, logqueue)
     cfg = config.PyWallConfig(conf)
     the_wall = cfg.create_pywall(packet_queue, query_pipe)
-    the_wall.run(**kwargs)
+    the_wall.erect(**kwargs)
 
 
 def run_egress(packet_queue, loglevel, logqueue):
@@ -36,7 +36,7 @@ def main(conf, loglevel, filename, **kwargs):
     kwargs['logqueue'] = log_queue
     initialize_logging(loglevel, log_queue)
 
-    ct = contrack.PyWallConTracker(ingress_queue, egress_queue, query_contrack)
+    ct = contrack.PyWallCracker(ingress_queue, egress_queue, query_contrack)
 
     log_process = mp.Process(target=log_server, args=(loglevel, log_queue,
                                                       filename))

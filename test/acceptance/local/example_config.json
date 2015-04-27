@@ -1,11 +1,11 @@
 {
     "default_chain": "ACCEPT",
     "INPUT": [
-        {"name": "PortFilter",
+        {"name": "PortRule",
          "protocol": "TCP",
          "src_port": 22,
          "action": "ACCEPT"},
-        {"name": "PortFilter",
+        {"name": "PortRule",
          "protocol": "TCP",
          "dst_port": 22,
          "action": "ACCEPT"},
