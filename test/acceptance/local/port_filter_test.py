@@ -53,12 +53,45 @@ tests = [
                                       remote_args=[CONF['target_host'], str(65535), 'UDP', 'dst'])),
 
     # Test source port filtering
-    ('TCPUnregSrcPort1', TestBlockTCP('block_unreg_src_ports.json', 49151, 
+    ('TCPUnregSrcPort1', TestBlockTCP('block_unreg_src_ports.json', 49151,
                                       remote_module='port_filter_remote.py',
                                       remote_args=[CONF['target_host'], str(49151), 'TCP', 'src'])),
-    ('UDPUnregSrcPort1', TestBlockUDP('block_unreg_src_ports.json', 49151, 
+    ('TCPUnregSrcPort2', TestBlockTCP('block_unreg_src_ports.json', 49152,
+                                      remote_module='port_filter_remote.py',
+                                      remote_args=[CONF['target_host'], str(49152), 'TCP', 'src'])),
+    ('TCPUnregSrcPort3', TestBlockTCP('block_unreg_src_ports.json', 65535,
+                                      remote_module='port_filter_remote.py',
+                                      remote_args=[CONF['target_host'], str(65535), 'TCP', 'src'])),
+    ('UDPUnregSrcPort1', TestBlockUDP('block_unreg_src_ports.json', 49151,
                                       remote_module='port_filter_remote.py',
                                       remote_args=[CONF['target_host'], str(49151), 'UDP', 'src'])),
+    ('UDPUnregSrcPort2', TestBlockUDP('block_unreg_src_ports.json', 49152,
+                                      remote_module='port_filter_remote.py',
+                                      remote_args=[CONF['target_host'], str(49152), 'UDP', 'src'])),
+    ('UDPUnregSrcPort3', TestBlockUDP('block_unreg_src_ports.json', 65535,
+                                      remote_module='port_filter_remote.py',
+                                      remote_args=[CONF['target_host'], str(65535), 'UDP', 'src'])),
+
+    # Conbined source/dstination port filtering
+    ('TCPUnregPort1', TestBlockTCP('block_unreg_ports.json', 49151,
+                                   remote_module='port_filter_remote.py',
+                                   remote_args=[CONF['target_host'], str(49151), 'TCP', 'src'])),
+    ('TCPUnregPort2', TestBlockTCP('block_unreg_ports.json', 49152,
+                                   remote_module='port_filter_remote.py',
+                                   remote_args=[CONF['target_host'], str(49152), 'TCP', 'src'])),
+    ('TCPUnregPort3', TestBlockTCP('block_unreg_ports.json', 65535,
+                                   remote_module='port_filter_remote.py',
+                                   remote_args=[CONF['target_host'], str(65535), 'TCP', 'src'])),
+    ('UDPUnregPort1', TestBlockUDP('block_unreg_ports.json', 49151,
+                                   remote_module='port_filter_remote.py',
+                                   remote_args=[CONF['target_host'], str(49151), 'UDP', 'src'])),
+    ('UDPUnregPort2', TestBlockUDP('block_unreg_ports.json', 49152,
+                                   remote_module='port_filter_remote.py',
+                                   remote_args=[CONF['target_host'], str(49152), 'UDP', 'src'])),
+    ('UDPUnregPort3', TestBlockUDP('block_unreg_ports.json', 65535,
+                                   remote_module='port_filter_remote.py',
+                                   remote_args=[CONF['target_host'], str(65535), 'UDP', 'src'])),
+
 ]
 
 s = '''
