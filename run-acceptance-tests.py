@@ -9,7 +9,10 @@ import glob
 
 if __name__ == '__main__':
     if len(sys.argv) > 1:
-        modules = sys.argv[1:]
+        if sys.argv[1] == 'test_connection':
+            modules = ['./test/acceptance/local/example_acceptance_test.py']
+        else:
+            modules = sys.argv[1:]
     else:
         modules = glob.glob(os.path.join(os.path.dirname(__file__), 'test/acceptance/local', '*_test.py'))
         print(modules)
