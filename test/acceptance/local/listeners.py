@@ -82,10 +82,9 @@ class UDPListener(BaseListener):
         start = datetime.now()
         print('listening...')
         try:
-            while start + timedelta(seconds=self._timeout) < datetime.now():
+            while datetime.now() < start + timedelta(seconds=self._timeout):
                 msg = sock.recv(1024)
                 if msg == self._msg:
-                    print('Listener: %s' % (msg))
                     queue.put(True)
                     break
         except:
