@@ -74,7 +74,8 @@ class UDPListener(BaseListener):
             sock.bind(('0.0.0.0', self._port))
             sock.listen(5)
             sock.settimeout(self._timeout)
-        except:
+        except Exception as e:
+            print(e)
             print('failed to set up UDP listener socket')
         finally:
             sem.release()
