@@ -56,7 +56,7 @@ tests = [
     ('TCPUnregSrcPort1', TestBlockTCP('block_unreg_src_ports.json', 49151, 
                                       remote_module='port_filter_remote.py',
                                       remote_args=[CONF['target_host'], str(49151), 'TCP', 'src'])),
-    ('UDPUnregSrcPort1', TestBlockTCP('block_unreg_src_ports.json', 49151, 
+    ('UDPUnregSrcPort1', TestBlockUDP('block_unreg_src_ports.json', 49151, 
                                       remote_module='port_filter_remote.py',
                                       remote_args=[CONF['target_host'], str(49151), 'UDP', 'src'])),
 ]
