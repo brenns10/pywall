@@ -35,7 +35,7 @@ if __name__ == '__main__':
             except socket.timeout:
                 rprint('remote socket timeout')
             s.close()
-        elif sock_Type == 'UDP':
+        elif sock_type == 'UDP':
             s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
             s.settimeout(timeout)
             if port_type == 'src':
