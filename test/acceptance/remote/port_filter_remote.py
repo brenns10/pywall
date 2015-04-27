@@ -17,7 +17,8 @@ if __name__ == '__main__':
         target_host = socket.gethostbyname(sys.argv[1])
         target_port = int(sys.argv[2])
         target = (target_host, target_port)
-        
+ 
+        timeout = 5
         sock_type = sys.argv[3]
         port_type = sys.argv[4]
 
