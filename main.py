@@ -18,7 +18,7 @@ def run_pywall(conf, packet_queue, query_pipe, kwargs):
     initialize_logging(loglevel, logqueue)
     cfg = config.PyWallConfig(conf)
     the_wall = cfg.create_pywall(packet_queue, query_pipe)
-    the_wall.run(**kwargs)
+    the_wall.erect(**kwargs)
 
 
 def run_egress(packet_queue, loglevel, logqueue):

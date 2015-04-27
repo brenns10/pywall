@@ -82,7 +82,7 @@ class PyWall(object):
         pywall_packet = IPPacket(packet.get_payload())
         self._apply_chain(self._start, packet, pywall_packet)
 
-    def run(self, **kwargs):
+    def erect(self, **kwargs):
         """Run the PyWall!"""
         # Setup firewall rule.
         setup = _NFQ_INIT % self.queue_num
