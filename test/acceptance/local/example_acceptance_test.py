@@ -5,6 +5,7 @@ host is working properly.
 from conf import CONF
 from pywall_acceptance_test_case import PyWallAcceptanceTestCase
 from listeners import TCPListener
+from listeners import UDPListener
 import socket
 
 
