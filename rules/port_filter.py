@@ -30,7 +30,7 @@ class PortRule(SimpleRule):
         return match
 
 
-class PortRangeFilter(SimpleRule):
+class PortRangeRule(SimpleRule):
     """Blocks all packets with given protocol on inclusive range [lo, hi]."""
     def __init__(self, **kwargs):  #protocol, match_callback, src_range=(None,None), dst_range=(None,None)):
         protocol = kwargs.get('protocol', None)
@@ -70,9 +70,9 @@ class PortRangeFilter(SimpleRule):
         match = match and ((self._dst_range == (None, None)) or
                            (self._dst_lo <= dst_port <= self._dst_hi))
         if match:
-            print('PortRangeFilter: %s' % str(self._action))
+            print('PortRangeRule: %s' % str(self._action))
         return match
 
 
 register(PortRule)
-register(PortRangeFilter)
+register(PortRangeRule)
