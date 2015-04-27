@@ -33,12 +33,24 @@ class TestBlockUDP(PyWallAcceptanceTestCase):
 
 tests = [
     # Tests dst_port filtering
-    ('TCPUnregDstPort1', TestBlockTCP('block_unreg_dst_ports.json', 49152,
+    ('TCPUnregDstPort1', TestBlockTCP('block_unreg_dst_ports.json', 49151,
+                                      remote_module='example_test_remote.py',
+                                      remote_args=[CONF['target_host'], str(49151)])),
+    ('TCPUnregDstPort2', TestBlockTCP('block_unreg_dst_ports.json', 49152,
                                       remote_module='example_test_remote.py',
                                       remote_args=[CONF['target_host'], str(49152)])),
-    ('UDPUnregDstPort1', TestBlockUDP('block_unreg_dst_ports.json', 49152,
+    ('TCPUnregDstPort3', TestBlockTCP('block_unreg_dst_ports.json', 65535,
                                       remote_module='example_test_remote.py',
-                                      remote_args=[CONF['target_host'], str(49152), 'UDP'])),
+                                      remote_args=[CONF['target_host'], str(65535)])),
+    ('UDPUnregDstPort1', TestBlockUDP('block_unreg_dst_ports.json', 49151,
+                                      remote_module='example_test_remote.py',
+                                      remote_args=[CONF['target_host'], str(49151)])),
+    ('UDPUnregDstPort2', TestBlockUDP('block_unreg_dst_ports.json', 49152,
+                                      remote_module='example_test_remote.py',
+                                      remote_args=[CONF['target_host'], str(49152)])),
+    ('UDPUnregDstPort3', TestBlockUDP('block_unreg_dst_ports.json', 65535,
+                                      remote_module='example_test_remote.py',
+                                      remote_args=[CONF['target_host'], str(65535)])),
 ]
 
 s = '''
