@@ -63,3 +63,25 @@ in conjunction.
 - `timeout`: How long the rule should maintain state about a knocking attempt.
 - `doors`: Doors to knock on. A list of (protocol, port) tuples.
 
+## Example Configuration
+
+```
+{
+  "default_chain": "ACCEPT",
+  "INPUT":[
+    {"name":"PrintRule"},
+    {"name":"PortKnocking",
+     "src_port": 9001,
+     "protocol": "TCP",
+     "port": 2222,
+     "timeout": 20,
+     "doors": [["TCP", 49001], ["UDP", 49011]]},
+    {"name":"TCPStateRule",
+     "match_if": ["CLOSED"],
+     "action": "DROP"},
+    {"name":"SourceIPRule",
+     "action": "DROP",
+     "cidr_range": "221.224.0.0/13"}
+   ]
+}
+```
