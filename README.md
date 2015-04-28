@@ -3,16 +3,40 @@ PyWall
 
 A Python firewall: Because slow networks are secure networks.
 
+
+Installation
+------------
+
+This section assumes that you are installing this program on Ubuntu 14.04 LTS.
+This firewall should work on other Linux systems, but safety not guaranteed.
+
+First, install the required packages. On Ubuntu, these are `iptables`, `python`,
+`build-essential`, `python-dev`, and `libnetfilter-queue-dev`. Next, use `pip2`
+to install the project dependencies, which can be found in `requirements.txt`.
+
+The commands for both these operations are:
+
+    sudo apt-get install python iptables build-essential python-dev libnetfilter-queue-dev
+    pip install --user -r requirements.txt
+
+
 Running
 -------
 
-You need Linux, IPTables, Python 2 and the package
-[python-netfilterqueue](https://github.com/kti/python-netfilterqueue).  Follow
-the installation instructions for that package (you need Python headers and
-`libnetfilter_queue` installed), preferably with pip in a virtualenv.
+The main file is `main.py`, which needs to be run as root to modify IPTables.
+Additionally, main needs to receive a JSON configuration file as its first
+argument. If running with the example configuration, the command is:
 
-The main file is `pywall.py`.  It needs to be run as root.  So, to run, simply
-do `sudo ./pywall.py` (or, more verbosely, `sudo python pywall.py`).  The PyWall
-takes care of setting up and tearing down its IPTables rule, so you don't need
-to worry about anything.  Once you Control-C it, the IPTables rule should be
-deleted, and your internet connection should be unaffected.
+`sudo python2 main.py examples/example.json`
+
+To stop PyWall, press Control-C.
+
+
+Troubleshooting
+---------------
+
+PyWall should undo its changes to IPTables after exiting. However, if you are
+unable to access the internet after exiting PyWall, view existing
+IPTables rules with `sudo iptables -nL`. If a rule with the target chain
+`NFQueue` lingers, delete it with
+`sudo iptables -D INPUT -j NFQueue --queue-num [undesired-queue-number]`.
