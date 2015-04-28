@@ -30,6 +30,7 @@ class PortRule(SimpleRule):
     def filter_condition(self, packet):
         """Condition to jump to action chain."""
         match = (packet.get_protocol() == self._protocol)
+        match = (packet.get_payload() is not None)
         match = match and (self._src_port is None or
                            packet.get_payload().get_src_port() == self._src_port)
         match = match and (self._dst_port is None or
@@ -77,13 +78,12 @@ class PortRangeRule(SimpleRule):
 
     def filter_condition(self, packet):
         """Condition to jump to action chain."""
-        src_port = packet.get_payload().get_src_port()
-        dst_port = packet.get_payload().get_dst_port()
-        match = (packet.get_protocol() == self._protocol)
+        match = (packet.get_payload() is not None)
+        match = match and (packet.get_protocol() == self._protocol)
         match = match and ((self._src_range == (None, None)) or
-                           (self._src_lo <= src_port <= self._src_hi))
+                           (self._src_lo <= packet.get_payload().get_src_port() <= self._src_hi))
         match = match and ((self._dst_range == (None, None)) or
-                           (self._dst_lo <= dst_port <= self._dst_hi))
+                           (self._dst_lo <= packet.get_payload().get_dst_port() <= self._dst_hi))
         if match:
             print('PortRangeRule: %s' % str(self._action))
         return match
