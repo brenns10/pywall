@@ -85,3 +85,8 @@ in conjunction.
    ]
 }
 ```
+
+You can create more chains than just the `INPUT` chain above -- simply copy and
+rename the `INPUT` chain above, and modify its rules.  Then, you can use your
+new chain as the destination ("action") for other rules, to create even more
+complicated configurations.
