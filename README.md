@@ -16,7 +16,7 @@ to install the project dependencies, which can be found in `requirements.txt`.
 
 The commands for both these operations are:
 
-    sudo apt-get install build-essential python-dev libnetfilter-queue-dev
+    sudo apt-get install python iptables build-essential python-dev libnetfilter-queue-dev
     pip install --user -r requirements.txt
 
 
