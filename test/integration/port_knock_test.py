@@ -45,5 +45,5 @@ class PKTest(PyWallTestCase):
 
 
 tests = [
-    ('PortKnockingTest', PKTest('test/integration/port_knocking_test.json', [('TCP', 49001), ('UDP', 49011)], 2222, 9001)),
+    ('PortKnockingTest', PKTest('test/integration/port_knocking_test.json', [('TCP', 49001), ('UDP', 49011)], 52222, 9001)),
 ]
