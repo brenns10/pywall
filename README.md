@@ -37,6 +37,6 @@ Troubleshooting
 
 PyWall should undo its changes to IPTables after exiting. However, if you are
 unable to access the internet after exiting PyWall, view existing
-IPTables rules with `sudo IPTables -nL`. If a rule with the target chain
+IPTables rules with `sudo iptables -nL`. If a rule with the target chain
 `NFQueue` lingers, delete it with
-`sudo IPTables -D INPUT -j NFQueue --queue-num [undesired-queue-number]`.
+`sudo iptables -D INPUT -j NFQueue --queue-num [undesired-queue-number]`.
