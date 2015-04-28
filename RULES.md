@@ -5,7 +5,7 @@ takes, to ease users in generating config files.
 
 ## `IPRangeRule`
 
-- `action`: What to do with the packet if the rule matches. 'ACCEPT' or 'DROP'.
+- `action`: Chain to send the packet to if it matches.
 - `cidr_range`: The IP address range to match on, specified in CIDR (Classless Inter-Domain Routing) format.
 
 ### `SourceIPRule` and `DestinationIPRule`
@@ -14,7 +14,7 @@ Both derive from `IPRangeRule`, so their arguments are the same.
 
 ## `PortRule`
 
-- `action`: What to do with the packet if the rule matches. 'ACCEPT' or 'DROP'.
+- `action`: Chain to send the packet to if it matches.
 - `protocol`: Which protocol to match on. 'TCP' or 'UDP'.
 - `src_port`: Which source port to match on.
 - `dst_port`: Which destination port to match on.
@@ -23,7 +23,7 @@ Only one of `src_port` and `dst_port` is required for the rule to function.
 
 ## `PortRangeRule`
 
-- `action`: What to do with the packet if the rule matches. 'ACCEPT' or 'DROP'.
+- `action`: Chain to send the packet to if it matches.
 - `protocol`: Which protocol to match on. 'TCP' or 'UDP'.
 - `src_lo`: Lower bound of the source port range. Inclusive.
 - `src_hi`: Upper bound of the source port range. Inclusive.
