@@ -4,17 +4,24 @@ from __future__ import print_function
 import json
 
 import rules
+# This import must be here to trigger all rules to be imported and register.
 from rules import *
 from pywall import PyWall
 
 
 class PyWallConfig(object):
+    """Creates instances of PyWall from a configuration file."""
 
     def __init__(self, filename):
+        """Constructor - takes filename, but doesn't open."""
         self.filename = filename
 
     def create_pywall(self, *args):
+        """Read the configuration file and create an instance of PyWall.
 
+        Any arguments will be passed to the constructor of PyWall.
+
+        """
         cfg = json.load(open(self.filename))
         default = cfg.pop('default_chain', 'ACCEPT')
 

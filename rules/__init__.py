@@ -63,4 +63,5 @@ class SimpleRule(Rule):
 
 
 def register(rule_class):
+    """This function must be called in every rule class."""
     rules[rule_class.__name__] = rule_class

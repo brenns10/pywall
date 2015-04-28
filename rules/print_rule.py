@@ -5,6 +5,11 @@ from rules import register, SimpleRule
 
 
 class PrintRule(SimpleRule):
+    """Rule that just prints the socket and its payload.
+
+    This is mostly irrelevent now that logging is enabled.
+
+    """
 
     def filter_condition(self, pywall_packet):
         """Prints out packet information at the IP level."""
