@@ -11,12 +11,13 @@ This section assumes that you are installing this program on Ubuntu 14.04 LTS.
 This firewall should work on other Linux systems, but safety not guaranteed.
 
 First, install the required packages. On Ubuntu, these are `iptables`, `python`,
-`build-essential`, `python-dev`, and `libnetfilter-queue-dev`. Next, use `pip2`
-to install the project dependencies, which can be found in `requirements.txt`.
+`python-pip`, `build-essential`, `python-dev`, and
+`libnetfilter-queue-dev`. Next, use `pip2` to install the project dependencies,
+which can be found in `requirements.txt`.
 
 The commands for both these operations are:
 
-    sudo apt-get install python iptables build-essential python-dev libnetfilter-queue-dev
+    sudo apt-get install python python-pip iptables build-essential python-dev libnetfilter-queue-dev
     pip install --user -r requirements.txt
 
 
