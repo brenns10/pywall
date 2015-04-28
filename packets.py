@@ -1,10 +1,17 @@
+"""Contains Python objects for IP and network layer datagrams/segments.
+
+These generally take a buffer in their constructor, and parse the header fields
+into class member fields so that we can access them easily.
+
+"""
+
 from __future__ import unicode_literals
 from struct import unpack
 from abc import ABCMeta
 from abc import abstractmethod
 import socket
 
-# Directly from IANA list of protocols.
+# A list of IP Protocol numbers, taken directly from IANA.
 PROTO_NUMS = {
     0: 'HOPOPT',
     1: 'ICMP',
@@ -67,14 +74,11 @@ PROTO_NUMS = {
     58: 'IPv6-ICMP',
     59: 'IPv6-NoNxt',
     60: 'IPv6-Opts',
-    61: '',
     62: 'CFTP',
-    63: '',
     64: 'SAT-EXPAK',
     65: 'KRYPTOLAN',
     66: 'RVD',
     67: 'IPPC',
-    68: '',
     69: 'SAT-MON',
     70: 'VISA',
     71: 'IPCV',
@@ -106,7 +110,6 @@ PROTO_NUMS = {
     96: 'SCC-SP',
     97: 'ETHERIP',
     98: 'ENCAP',
-    99: '',
     100: 'GMTP',
     101: 'IFMP',
     102: 'PNNI',
@@ -121,7 +124,6 @@ PROTO_NUMS = {
     111: 'IPX-in-IP',
     112: 'VRRP',
     113: 'PGM',
-    114: '',
     115: 'L2TP',
     116: 'DDX',
     117: 'IATP',
@@ -152,6 +154,7 @@ PROTO_NUMS = {
     142: 'ROHC'
 }
 
+
 def payload_builder(payload_buff, protocol):
     """If `protocol` is supported, builds packet object from buff."""
     if protocol == socket.IPPROTO_TCP:
@@ -163,6 +166,12 @@ def payload_builder(payload_buff, protocol):
 
 
 def to_tuple(ippacket, flip=False):
+    """Create a tuple from a TCP packet.
+
+    The flip argument flips the source and destination port, so that they will
+    be consistent between ingress and egress.
+
+    """
     payload = ippacket.get_payload()
     if type(payload) is TCPPacket and not flip:
         tup = (ippacket.get_src_ip(), payload.get_src_port(),  # remote
@@ -177,12 +186,14 @@ def to_tuple(ippacket, flip=False):
 
 
 def proto_to_string(proto):
+    """Convert protocol number to a string."""
     return PROTO_NUMS.get(proto, 'unknown')
 
 
 class Packet(object):
     """Base class for all packets"""
     __metaclass__ = ABCMeta
+
     @abstractmethod
     def get_header_len(self):
         pass
@@ -195,6 +206,7 @@ class Packet(object):
 class TransportLayerPacket(Packet):
     """Base class packets at the transport layer """
     __metaclass__ = ABCMeta
+
     @abstractmethod
     def get_body(self):
         pass
@@ -237,6 +249,8 @@ class IPPacket(Packet):
 
 
 class TCPPacket(TransportLayerPacket):
+    """TCP Packet object."""
+
     def __init__(self, buff):
         self._parse_header(buff)
 
@@ -255,7 +269,8 @@ class TCPPacket(TransportLayerPacket):
         self.flag_syn = flags & 0x0002
         self.flag_fin = flags & 0x0001
         self._checksum, self._urg_ptr = unpack('!HH', buff[16:20])
-        self._options = buff[20:(self._data_offset * 4)]  # can be parsed later if we care
+        # can be parsed later if we care:
+        self._options = buff[20:(self._data_offset * 4)]
         self._total_length = len(buff)
         self._body = buff[self.get_header_len():]
 
@@ -280,6 +295,8 @@ class TCPPacket(TransportLayerPacket):
 
 
 class UDPPacket(TransportLayerPacket):
+    """UDP Packet object."""
+
     def __init__(self, buff):
         self._parse_header(buff)
 
@@ -303,7 +320,6 @@ class UDPPacket(TransportLayerPacket):
 
     def get_body(self):
         return str(self._body)
-
 
     def __unicode__(self):
         """Returns a printable version of the UDP header"""
